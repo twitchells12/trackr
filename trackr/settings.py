@@ -17,7 +17,7 @@ from .secret_settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 STATIC_DIR = os.path.join(BASE_DIR,'static')
-MEDIA_DIR = os.path.join(BASE_DIR,'images')
+MEDIA_DIR = os.path.join(BASE_DIR,'static/images')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -26,9 +26,9 @@ MEDIA_DIR = os.path.join(BASE_DIR,'images')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['st-trackr.herokuapp.com','27.0.0.1']
+ALLOWED_HOSTS = ['st-trackr.herokuapp.com','127.0.0.1']
 
 
 # Application definition
