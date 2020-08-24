@@ -1,9 +1,10 @@
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from projects.models import Project
 from django.contrib import messages
 
-class HomePage(TemplateView):
+
+class HomePage(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
     model = Project
 
