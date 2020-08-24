@@ -1,0 +1,22 @@
+{% extends "projects/project_base.html" %}
+{% block proj_content %}
+<div class="container">
+  <h1>{{project_user.username}}</h1>
+</div>
+<table class="table">
+	<thead>
+		<tr>
+      <th>Project #</th>
+			<th>Project Name</th>
+			<th>Description</th>
+			<th>Status</th>
+      <th>Team</th>
+		</tr>
+	</thead>
+
+  <div class="container w-75 p-3 mx-auto">
+    {% for project in project_list %}
+      {% include "projects/_projectlistuser.html" %}
+    {% endfor %}
+  </div>
+{% endblock %}

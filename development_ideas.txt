@@ -1,0 +1,20 @@
+Trackr Development Ideas
+
+
+Global changes :
+Add ability to have multiple users associated with a project… (increases teams capability for this?)
+
+
+Project List Changes:
+Under project list add todo type functionality.
+
+
+Project Detail Changes:
+Redesign project detail…
+	-add comment options
+	-add attachments (doesn’t have to be completely functional)
+	-add capability to change status/edit
+
+
+Team Changes:
+Redesign team site… (get away from base view.)

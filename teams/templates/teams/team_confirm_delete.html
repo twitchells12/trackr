@@ -1,0 +1,12 @@
+{% extends "teams/team_base.html" %}
+
+{% block postgroup %}
+<h3>Are you sure you want to delete this team?</h3>
+
+<form method="POST">
+	{% csrf_token %}
+	<input type="submit" value="Confirm Delete" class="btn btn-danger btn-large">
+	<a href="{% url 'teams:single' slug=team.slug %}" class="btn btn-light btn-large">Cancel</a>
+</form>
+
+{% endblock %}

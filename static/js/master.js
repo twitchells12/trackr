@@ -1,0 +1,18 @@
+$(window).on('load',function(){
+  $('#loginModal').modal('show');
+});
+$(window).on('load',function(){
+  $('#profileModal').modal('show');
+});
+$(window).on('load',function(){
+  $('#projectModal').modal('show');
+});
+$(window).on('load',function(){
+  $('#projectDeleteModal').modal('show');
+});
+$(window).on('load',function(){
+  $('#projEditModal').modal('show');
+});
+$(window).on('load',function(){
+  $('#workerModal').modal('show');
+});

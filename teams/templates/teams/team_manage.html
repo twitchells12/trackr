@@ -1,0 +1,24 @@
+{% extends "teams/team_base.html" %}
+
+{% block pregroup %}
+
+  <div class="container">
+  <h1>{{team.name}}</h1>
+  <h4>
+    {% for member in team.members.all %}
+      <p>{{member}}</p>
+      <p>{{member.pk}}</p>
+      <a class='btn btn-primary' href="{% url 'teams:remove_member' pk=member.pk %}">
+        <span class="fa fa-remove"></span>
+      </a>
+    {% endfor %}
+  </h4>
+  </div>
+
+  <div class="content">
+    {% if user.is_superuser %}
+      <a href="{% url 'teams:delete' slug=team.slug %}" class="btn btn-lg btn-warning"><span class="fa fa-check-circle-o"></span> Delete</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

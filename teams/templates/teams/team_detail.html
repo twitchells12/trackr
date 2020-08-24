@@ -1,0 +1,89 @@
+{% extends "teams/team_base.html" %}
+
+{% block pregroup %}
+
+  <div class="container">
+    <nav class="navbar navbar-expand-lg" role="navigation" id="navbar">
+      <div class="container">
+        <div class="navbar-nav align-items-center">
+          <h1 class="navbar-brand team-name" ><strong>{{team.name}}</strong></h1>
+        </div>
+        <div class="navbar-nav ml-auto">
+          <a data-toggle="modal" data-target="#modalMembers" href="#modalMembers" class="btn btn-lg btn-primary btn-sm members">Members</a>
+          {% if user not in team.members.all %}
+          <a href="{% url 'teams:join' slug=team.slug %}" class="btn btn-sm btn-info"><span class="fa fa-check-circle-o"></span> Join</a>
+          {% else %}
+          <a href="{% url 'teams:leave' slug=team.slug %}" class="btn btn-sm btn-warning"><span class="fa fa-minus-circle"></span> Leave</a>
+          {% endif %}
+          {% if user.is_superuser %}
+            <a href="{% url 'teams:delete' slug=team.slug %}" class="btn btn-sm btn-danger"><span class="fa fa-times-circle-o"></span> Delete</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </div>
+
+{% endblock %}
+
+{% block group_content %}
+
+<div class='container'>
+	{% if team.projects.count == 0 %}
+	<h2>No projects in this team yet!</h2>
+
+	{% else %}
+  <br>
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:10%">Project #</th>
+    			<th>Project Name</th>
+    			<th>Worker</th>
+    			<th>Description</th>
+    			<th>Status</th>
+          <th>Team</th>
+        </tr>
+      </thead>
+
+  		{% for project in team.projects.all %}
+  			{% include "projects/_projectlist.html" %}
+  		{% endfor %}
+
+  	{% endif %}
+  </div>
+</div>
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modalMembers" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{team.name}} Members</h5>
+        <button type="button" class="close" aria-label="Close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for i in team.members.all %}
+          <p>{{i}}</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('.members').on('click',function(){
+  $('.modal-body').load("{% url 'teams:members' slug=team.slug %}",function(){
+    $('#modalMembers').modal({show:true});
+  });
+});
+</script>
+
+
+{% endblock %}

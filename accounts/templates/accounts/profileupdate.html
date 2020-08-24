@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+  <h1>User Profile</h1>
+
+  <style>
+  	.profile-pic{
+  		max-width: 200px;
+  		max-height:200px;
+  		margin: 0 auto;
+  		border-radius: 50%;
+  	}
+  </style>
+
+  <br>
+  <div class="row">
+  	<div class="col-md-3">
+  		<div class="card card-body">
+  			<a class="btn btn-warning" href="{% url 'accounts:profile' %}"> &#8592; Back to Profile</a>
+  			<hr>
+  			<h3 style="text-align: center">Account Settings</h3>
+  			<hr>
+  			<img class="profile-pic" src="{{request.user.userprofile.profile_pic.url}}" >
+
+  		</div>
+  	</div>
+  	<div class="col-md-9">
+  		<div class="card card-body">
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% bootstrap_form form layout='inline' exclude='is_manager' %}
+          <a class="btn btn-default btn-large" href="{% url 'accounts:profile' %}" role="button">Cancel</a>
+          <input type="submit" class="btn btn-primary btn-large" value="Update">
+        </form>
+  		</div>
+  	</div>
+  </div>
+{% endblock %}

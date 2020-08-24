@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+  <br><br>
+
+    <div class="card-deck">
+      <div class="card text-center bg-primary">
+        <div class="card-body ">
+          <h5 class="card-title">Active Projects</h5>
+          <p class="card-text center">{{active}}</p>
+        </div>
+      </div>
+      <div class="card text-center bg-warning">
+        <div class="card-body">
+          <h5 class="card-title">Projects on Hold</h5>
+          <p class="card-text center">{{hold}}</p>
+        </div>
+      </div>
+      <div class="card text-center bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Completed Projects</h5>
+          <p class="card-text center">{{complete}}</p>
+        </div>
+      </div>
+    </div>
+
+</div>
+{% endblock %}

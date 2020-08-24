@@ -1,0 +1,7 @@
+<div class="content">
+  {% if user in team.members.all %}
+    <a href="{% url 'teams:leave' slug=team.slug %}" class="btn btn-lg btn-warning"><span class="fa fa-times-circle-o"></span> Leave</a>
+  {% else %}
+    <a href="{% url 'teams:join' slug=team.slug %}" class="btn btn-lg btn-warning"><span class="fa fa-check-circle-o"></span> Join</a>
+  {% endif %}
+</div>

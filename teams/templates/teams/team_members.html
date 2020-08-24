@@ -1,0 +1,3 @@
+{% for member in team.members.all %}
+  <p><a href="{% url 'accounts:profile' pk=member.pk %}">{{member}}</a></p>
+{% endfor %}

@@ -1,0 +1,35 @@
+{% extends "projects/project_base.html" %}
+{% load bootstrap4 %}
+{% block proj_content %}
+
+<style>
+  .profile-pic{
+    max-width: 200px;
+    max-height:200px;
+    margin: 0 auto;
+    border-radius: 50%;
+  }
+</style>
+
+<br>
+<div class="row">
+  <div class="col-md-3">
+    <div class="card card-body">
+      <hr>
+      <h3 style="text-align: center">{{project.worker.username}}</h3>
+      <hr>
+      <img class="profile-pic" src="{{project.worker.userprofile.profile_pic.url}}">
+    </div>
+  </div>
+
+
+  <div class="card text-center" style="width:40rem;">
+    <div class="card-body">
+      <p class="card-text">First Name: {{project.worker.first_name}}</p>
+      <p class="card-text">Last Name: {{project.worker.last_name}}</p>
+      <p class="card-text">Email: {{project.worker.email}}</p>
+      <p class="card-text">Phone: {{project.worker.userprofile.phone}}</p>
+    </div>
+  </div>
+
+{% endblock %}

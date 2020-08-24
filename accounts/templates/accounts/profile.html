@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<style>
+  .profile-pic{
+    max-width: 200px;
+    max-height:200px;
+    margin: 0 auto;
+    border-radius: 50%;
+  }
+</style>
+
+<br>
+<div class="row">
+  <div class="col-md-3">
+    <div class="card card-body">
+      <hr>
+      <h3 style="text-align: center">{{user.username}}</h3>
+      <hr>
+      <img class="profile-pic" src="{{request.user.userprofile.profile_pic.url}}">
+
+    </div>
+  </div>
+
+
+  <div class="card text-center" style="width:40rem;">
+    <div class="card-body">
+      <p class="card-text">First Name: {{profile.first_name}}</p>
+      <p class="card-text">Last Name: {{profile.last_name}}</p>
+      <p class="card-text">Email: {{profile.email}}</p>
+      <p class="card-text">Phone: {{profile.phone}}</p>
+      <p class="card-text">Address: {{profile.address}}</p>
+      <p class="card-text">City: {{profile.city}}</p>
+      <p class="card-text">State: {{profile.state}}</p>
+      <p class="card-text">Zip: {{profile.zip}}</p>
+      <p>Teams: {% for team in teamlist %}
+            <a href="{% url 'teams:single' slug=team.slug %}">{{team}}</a>,
+          {% endfor %}</p>
+
+      <a href="{% url 'accounts:update' %}" class="btn btn-primary">update</a>
+    </div>
+  </div>
+{% endblock %}

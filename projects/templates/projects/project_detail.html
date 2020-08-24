@@ -1,0 +1,108 @@
+{% extends "projects/project_base.html" %}
+{% block proj_content %}
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Project # </th>
+			<th>Project Name</th>
+			<th>Worker</th>
+			<th>Description</th>
+			<th>Created On</th>
+			<th>Due Date</th>
+			<th>Status</th>
+			<th>Completed On</th>
+			<th>Team</th>
+		</tr>
+	</thead>
+<div class="container w-75 p-3 mx-auto">
+    {% include "projects/_projectdetail.html" %}
+</div>
+</table>
+<div class="container">
+  <div class="row justify-content-md-center">
+		{% if user.is_superuser %}
+			<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
+					<span class="fa fa-edit text-danger" aria-hidden='true'></span>
+					<span class='text-danger icon-label'></span>Edit
+				</a>
+			<a data-toggle="modal" data-target="#projectDeleteModal" href="#projectDeleteModal" class="btn btn-simple deletemodal">
+					<span class="fa fa-remove text-danger" aria-hidden='true'></span>
+					<span class='text-danger icon-label'></span>Delete
+				</a>
+			{% else %}
+				{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager %}
+				<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
+						<span class="fa fa-edit text-danger" aria-hidden='true'></span>
+						<span class='text-danger icon-label'></span>Edit
+					</a>
+				<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple">
+						<span class="fa fa-remove text-danger" aria-hidden='true'></span>
+						<span class='text-danger icon-label'></span>Delete
+					</a>
+				{% endif %}
+		{% endif %}
+	</div>
+</div>
+
+<a class="btn btn-primary btn-comment" href="{% url 'projects:add_comment' pk=project.pk %}">Add Comment</a>
+
+<div class="container-fluid">
+	<br>
+	<div class="row justify-content-center">
+		{% for comment in project.comments.all %}
+			{% if user.is_authenticated or comment.approved_comment %}
+				<div class="col-auto mb-3">
+					<div class="card" style="width: 18rem;">
+						<div class="card-body">
+							<h5 class="card-header mb-2">{{ comment.title }}</h5>
+							<p class="card-text mb-0 text-muted">Comment: </p>
+							<p class="card-text">{{ comment.text }}</p>
+							<p class="card-text text-muted text-right">Author: {{ comment.author }}</p>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		{% empty %}
+		    <p>No comments here yet :(</p>
+		{% endfor %}
+	</div>
+</div>
+
+
+
+
+<div class="modal fade" id="projectDeleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Delete Project: <strong>{{project.project_name}}</strong> ?</h5>
+          <a href="javascript:history.go(-1)"><button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button></a>
+      </div>
+      <div class="modal-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="container">
+            <div class="row">
+              <div class="col text-center">
+                <input type="submit" class="btn btn-danger btn-large mx-auto" value="Confirm Delete">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('.deletemodal').on('click',function(){
+    $('#projectDeleteModal').modal({show:true});
+});
+
+</script>
+
+{% endblock %}
