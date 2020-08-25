@@ -13,29 +13,34 @@ from .models import Project,Comment
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from teams.models import Team,TeamMember
+from datetime import date
+from datetime import datetime
 
-class ProjectList(SelectRelatedMixin,LoginRequiredMixin, generic.ListView):
-    model = Project
-    select_related = ("worker",)
+@login_required
+def projectList(request):
+    projects = Project.objects.all()
+    today = date.today()
+    for project in projects:
+        dt = project.due_date.date()
+        if dt < today:
+            project.status = 'Past Due'
+    context = {'projects':projects}
+    return render(request, 'projects/project_list.html',context)
 
-class UserProjects(LoginRequiredMixin,generic.ListView):
-    model = Project
-    template_name = "projects/user_project_list.html"
 
-    def get_queryset(self):
-        try:
-            self.project_user = User.objects.prefetch_related("projects").get(
-                username__iexact=self.kwargs.get("username")
-            )
-        except User.DoesNotExist:
-            raise Http404
-        else:
-            return self.project_user.projects.all()
+@login_required
+def userProjects(request):
+    projects = Project.objects.filter(worker=request.user)
+    project_user = User.objects.prefetch_related("projects").get(
+                                    username__iexact=request.user.username)
+    today = date.today()
+    for project in projects:
+        dt = project.due_date.date()
+        if dt < today:
+            project.status = 'Past Due'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["project_user"] = self.project_user
-        return context
+    context = {'projects':projects,'project_user':project_user}
+    return render(request, 'projects/user_project_list.html',context)
 
 
 class ProjectDetail(SelectRelatedMixin, LoginRequiredMixin,generic.DetailView):
@@ -45,7 +50,7 @@ class ProjectDetail(SelectRelatedMixin, LoginRequiredMixin,generic.DetailView):
 
 
 class CreateProject(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
-    fields = ['project_name','description','worker','status','due_date','completed_on','team']
+    fields = ['project_name','description','created_by','worker','status','due_date','completed_on','team']
     model = Project
 
     def get_form(self):
@@ -53,6 +58,7 @@ class CreateProject(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
         form.fields['due_date'].widget = DatePickerInput()
         form.fields['completed_on'].widget = DatePickerInput()
         form.fields['worker'].initial = self.request.user
+        form.fields['created_by'].initial = self.request.user
         return form
 
     def form_valid(self, form):
