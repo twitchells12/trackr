@@ -12,16 +12,17 @@
       <a href="{% url 'projects:single' pk=project.pk %}" class="list-group-item list-group-item-action">
         <div class="d-flex justify-content-between align-items-center row">
           <div class="col-sm-6"><strong>{{project.project_name}}</strong></div>
-
-          {% if project.status == 'Active' %}
-            <span class="badge badge-primary">{{project.status}}</span>
-          {% elif project.status == 'Hold' %}
-            <span class="badge badge-warning">{{project.status}}</span>
-          {% elif project.status == 'Past Due' %}
-            <span class="badge badge-danger">{{project.status}}</span>
-          {% else %}
-            <span class="badge badge-success">{{project.status}}</span>
-          {% endif %}
+          <div class="col-sm-1">
+            {% if project.status == 'Active' %}
+              <span class="badge badge-primary">{{project.status}}</span>
+            {% elif project.status == 'Hold' %}
+              <span class="badge badge-warning">{{project.status}}</span>
+            {% elif project.status == 'Past Due' %}
+              <span class="badge badge-danger">{{project.status}}</span>
+            {% else %}
+              <span class="badge badge-success">{{project.status}}</span>
+            {% endif %}
+          </div>
         </div>
       </a>
     {% endfor %}
