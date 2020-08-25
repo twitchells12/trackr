@@ -35,9 +35,11 @@ class Project(models.Model):
         return self.comments.filter(approved_comment=True)
 
     def checkStatus(self):
-        if self.due_date < date.today():
+        today = date.today()
+        dt = self.due_date.date()
+        if dt < today:
             self.status = 'Past Due'
-        return self.status
+        self.save()
 
     class Meta():
         ordering = ['-created_at']

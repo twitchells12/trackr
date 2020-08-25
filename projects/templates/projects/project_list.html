@@ -12,7 +12,7 @@
     {% for project in projects %}
       <a href="{% url 'projects:single' pk=project.pk %}" class="list-group-item list-group-item-action">
         <div class="d-flex justify-content-between align-items-center row">
-          <div class="col-sm-6">{{project.project_name}}</div>
+          <div class="col-sm-6"><strong>{{project.project_name}}</strong></div>
           {% if project.status == 'Active' %}
             <span class="badge badge-primary">{{project.status}}</span>
           {% elif project.status == 'Hold' %}
@@ -22,6 +22,7 @@
           {% else %}
             <span class="badge badge-success">{{project.status}}</span>
           {% endif %}
+          <div class="col-sm-1">{{project.worker}}</div>
         </div>
       </a>
     {% endfor %}

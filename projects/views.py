@@ -13,17 +13,13 @@ from .models import Project,Comment
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from teams.models import Team,TeamMember
-from datetime import date
-from datetime import datetime
+
 
 @login_required
 def projectList(request):
     projects = Project.objects.all()
-    today = date.today()
     for project in projects:
-        dt = project.due_date.date()
-        if dt < today:
-            project.status = 'Past Due'
+        project.checkStatus()
     context = {'projects':projects}
     return render(request, 'projects/project_list.html',context)
 
@@ -33,11 +29,6 @@ def userProjects(request):
     projects = Project.objects.filter(worker=request.user)
     project_user = User.objects.prefetch_related("projects").get(
                                     username__iexact=request.user.username)
-    today = date.today()
-    for project in projects:
-        dt = project.due_date.date()
-        if dt < today:
-            project.status = 'Past Due'
 
     context = {'projects':projects,'project_user':project_user}
     return render(request, 'projects/user_project_list.html',context)

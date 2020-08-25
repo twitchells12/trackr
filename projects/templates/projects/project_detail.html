@@ -26,6 +26,9 @@
         <li class="list-group-item">
           <strong>Due date:</strong> {{ project.due_date.date }}
         </li>
+        {% comment %} <li class="list-group-item">
+          <strong>Completed on:</strong> {{ project.status}}
+        </li> {% endcomment %}
 
         {% if project.status == 'Complete' %}
           <li class="list-group-item">
@@ -47,23 +50,23 @@
 				<li class="list-group-item">
 					{% if user.is_superuser %}
 						<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
-								<span class="fa fa-edit text-danger" aria-hidden='true'></span>
-								<span class='text-danger icon-label'></span>Edit
-							</a>
-						<a data-toggle="modal" data-target="#projectDeleteModal" href="#projectDeleteModal" class="btn btn-simple deletemodal">
-								<span class="fa fa-remove text-danger" aria-hidden='true'></span>
-								<span class='text-danger icon-label'></span>Delete
-							</a>
+							<span class="fa fa-edit text-danger" aria-hidden='true'></span>
+							<span class='text-danger icon-label'></span>Edit
+						</a>
+            <a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple">
+							<span class="fa fa-remove text-danger" aria-hidden='true'></span>
+							<span class='text-danger icon-label'></span>Delete
+						</a>
 					{% else %}
 						{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager %}
 							<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
-									<span class="fa fa-edit text-danger" aria-hidden='true'></span>
-									<span class='text-danger icon-label'></span>Edit
-								</a>
+								<span class="fa fa-edit text-danger" aria-hidden='true'></span>
+								<span class='text-danger icon-label'></span>Edit
+							</a>
 							<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple">
-									<span class="fa fa-remove text-danger" aria-hidden='true'></span>
-									<span class='text-danger icon-label'></span>Delete
-								</a>
+								<span class="fa fa-remove text-danger" aria-hidden='true'></span>
+								<span class='text-danger icon-label'></span>Delete
+							</a>
 						{% endif %}
 					{% endif %}
 				</li>

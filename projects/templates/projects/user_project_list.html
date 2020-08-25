@@ -2,7 +2,7 @@
 {% block proj_content %}
 <br>
 <div class="container">
-  <h1>{{project_user}}</h1>
+  <h1><strong>{{project_user}}</strong> Projects</h1>
 </div>
 
 <br>
@@ -11,7 +11,7 @@
     {% for project in projects %}
       <a href="{% url 'projects:single' pk=project.pk %}" class="list-group-item list-group-item-action">
         <div class="d-flex justify-content-between align-items-center row">
-          <div class="col-sm-6">{{project.project_name}}</div>
+          <div class="col-sm-6"><strong>{{project.project_name}}</strong></div>
 
           {% if project.status == 'Active' %}
             <span class="badge badge-primary">{{project.status}}</span>
