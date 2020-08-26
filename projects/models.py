@@ -41,6 +41,12 @@ class Project(models.Model):
             self.status = 'Past Due'
         self.save()
 
+    def markComplete(self):
+        today = date.today()
+        self.completed_on = today
+        self.status = 'Complete'
+        self.save()
+
     class Meta():
         ordering = ['-created_at']
         unique_together = ['worker','project_name']

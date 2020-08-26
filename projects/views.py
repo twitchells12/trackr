@@ -84,6 +84,11 @@ class WorkerView(LoginRequiredMixin,SelectRelatedMixin,generic.DetailView):
     select_related = ("worker",)
     template_name = 'projects/worker_profile.html'
 
+@login_required
+def completeProject(request, pk):
+    projects = Project.objects.get(pk=pk)
+    projects.markComplete()
+    return redirect ('projects:single', pk=projects.pk)
 
 
 @login_required
@@ -98,6 +103,7 @@ def add_comment(request, pk):
             return redirect('projects:single', pk=project.pk)
     else:
         form = CommentForm()
+        form.fields['author'].initial = request.user
     return render(request, 'projects/comment_form.html', {'form': form})
 
 
@@ -110,5 +116,6 @@ def comment_approve(request, pk):
 @login_required
 def comment_remove(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
+    project_pk = comment.project.pk
     comment.delete()
-    return redirect('post_detail', pk=comment.project.pk)
+    return redirect('projects:single', pk=project_pk)

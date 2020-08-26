@@ -11,6 +11,7 @@ urlpatterns = [
     path('by/',views.userProjects,name='for_user'),
     path("project/<int:pk>/",views.ProjectDetail.as_view(),name="single"),
     path("delete/<int:pk>/",views.DeleteProject.as_view(),name="delete"),
+    path("complete/<int:pk>/",views.completeProject,name="complete"),
     path("edit/<int:pk>/",views.EditProject.as_view(),name="edit"),
     path("worker/<pk>/",views.WorkerView.as_view(),name="worker"),
     path('project/<int:pk>/comment/', views.add_comment, name='add_comment'),

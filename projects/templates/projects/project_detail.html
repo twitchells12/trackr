@@ -2,6 +2,10 @@
 {% block proj_content %}
 
 <br>
+<div class="container">
+  <a class="btn btn-warning btn-sm" href="javascript:history.go(-1)">&#8592; Back to List</a>
+</div>
+<br>
 <div class="card-deck">
     <div class="card col-sm-8">
       <div class="card-body">
@@ -32,7 +36,10 @@
 
         {% if project.status == 'Complete' %}
           <li class="list-group-item">
-            <strong>Completed on:</strong> {{ project.completed_on}}
+            <strong>Completed on:</strong> {{ project.completed_on.date}}
+          </li>
+          <li class="list-group-item">
+            <strong>Completed:</strong> Yes
           </li>
         {% else %}
           <li class="list-group-item">
@@ -59,13 +66,14 @@
 						</a>
 					{% else %}
 						{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager %}
+              <a href="{% url 'projects:complete' pk=project.pk %}" title:'complete' class="btn btn-simple">
+                <span class="fa fa-check text-success" aria-hidden='true'></span> Complete
+              </a>
 							<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
-								<span class="fa fa-edit text-danger" aria-hidden='true'></span>
-								<span class='text-danger icon-label'></span>Edit
+								<span class="fa fa-edit text-danger" aria-hidden='true'></span> Edit
 							</a>
 							<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple">
-								<span class="fa fa-remove text-danger" aria-hidden='true'></span>
-								<span class='text-danger icon-label'></span>Delete
+								<span class="fa fa-remove text-danger" aria-hidden='true'></span> Delete
 							</a>
 						{% endif %}
 					{% endif %}
@@ -82,16 +90,23 @@
 	<div class="row justify-content-center">
 		{% for comment in project.comments.all %}
 			{% if user.is_authenticated or comment.approved_comment %}
-				<div class="col-auto mb-3">
-					<div class="card" style="width: 18rem;">
-						<div class="card-body">
-							<h5 class="card-header mb-2">{{ comment.title }}</h5>
-							<p class="card-text mb-0 text-muted">Comment: </p>
-							<p class="card-text">{{ comment.text }}</p>
-							<p class="card-text text-muted text-right">Author: {{ comment.author }}</p>
-						</div>
-					</div>
-				</div>
+
+  				<div class="col-auto mb-3">
+  					<div class="card" style="width: 18rem;">
+  						<div class="card-body">
+  							<h5 class="card-header mb-2">{{ comment.title }}
+                  {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}" class='pl-6'>
+                      <span class="fa fa-remove text-danger" aria-hidden='true'></span>
+                    </a>
+                  {% endif %}
+                </h5>
+  							<p class="card-text mb-0 text-muted">Comment: </p>
+  							<p class="card-text">{{ comment.text }}</p>
+  							<p class="card-text text-muted text-right">Author: {{ comment.author }}</p>
+  						</div>
+  					</div>
+  				</div>
 			{% endif %}
 		{% empty %}
 		    <p>No comments here yet :(</p>
