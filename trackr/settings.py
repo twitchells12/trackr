@@ -11,8 +11,19 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+<<<<<<< HEAD
 
 from .secret_settings import *
+||||||| 2be685b
+from .secret_settings import *
+=======
+import environ
+# from .secret_settings import *
+env= environ.Env(
+    DEBUG=(bool,False)
+)
+environ.Env.read_env()
+>>>>>>> develop
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,10 +35,10 @@ MEDIA_DIR = os.path.join(BASE_DIR,'static/images')
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['st-trackr.herokuapp.com','127.0.0.1']
 
@@ -140,3 +151,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_HOST_USER=env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD=env('EMAIL_HOST_PASSWORD')

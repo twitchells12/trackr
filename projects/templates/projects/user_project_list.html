@@ -1,22 +1,38 @@
 {% extends "projects/project_base.html" %}
 {% block proj_content %}
+<br>
 <div class="container">
-  <h1>{{project_user.username}}</h1>
+  <h1><strong>{{project_user}}</strong> Projects</h1>
 </div>
-<table class="table">
-	<thead>
-		<tr>
-      <th>Project #</th>
-			<th>Project Name</th>
-			<th>Description</th>
-			<th>Status</th>
-      <th>Team</th>
-		</tr>
-	</thead>
 
-  <div class="container w-75 p-3 mx-auto">
-    {% for project in project_list %}
-      {% include "projects/_projectlistuser.html" %}
-    {% endfor %}
+<br>
+<div class="d-flex justify-content-center">
+  <div class="container list-group">
+    <div class="d-flex justify-content-between align-items-center row">
+      <div class="col-sm-5 text-muted">Project</div>
+      <div class="col-sm-2 text-muted">Status</div>
+      <div class="col-sm-2 text-muted">Team</div>
+
+      {% for project in projects %}
+        <a href="{% url 'projects:single' pk=project.pk %}" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-center row">
+            <div class="col-sm-5"><strong>{{project.project_name}}</strong></div>
+              {% if project.status == 'Active' %}
+                <div class="col-sm-2"><span class="badge badge-primary">{{project.status}}</span></div>
+              {% elif project.status == 'Hold' %}
+                <div class="col-sm-2"><span class="badge badge-warning">{{project.status}}</span></div>
+              {% elif project.status == 'Past Due' %}
+                <div class="col-sm-2"><span class="badge badge-danger">{{project.status}}</span></div>
+              {% else %}
+                <div class="col-sm-2"><span class="badge badge-success">{{project.status}}</span></div>
+              {% endif %}
+            <div class="col-sm-2">{{project.team}}</div>
+          </div>
+        </a>
+      {% endfor %}
   </div>
+</div>
+
+
+
 {% endblock %}

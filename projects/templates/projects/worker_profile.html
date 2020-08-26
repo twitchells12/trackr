@@ -12,7 +12,7 @@
 </style>
 
 <br>
-<div class="row">
+<div class="d-flex justify-content-center">
   <div class="col-md-3">
     <div class="card card-body">
       <hr>
@@ -25,10 +25,10 @@
 
   <div class="card text-center" style="width:40rem;">
     <div class="card-body">
-      <p class="card-text">First Name: {{project.worker.first_name}}</p>
-      <p class="card-text">Last Name: {{project.worker.last_name}}</p>
-      <p class="card-text">Email: {{project.worker.email}}</p>
-      <p class="card-text">Phone: {{project.worker.userprofile.phone}}</p>
+      <p class="card-text"><strong>First Name:</strong> {{project.worker.first_name}}</p>
+      <p class="card-text"><strong>Last Name:</strong> {{project.worker.last_name}}</p>
+      <p class="card-text"><strong>Email:</strong> {{project.worker.email|urlize}}</p>
+      <p class="card-text"><strong>Phone:</strong> {{project.worker.userprofile.phone}}</p>
     </div>
   </div>
 

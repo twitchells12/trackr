@@ -9,11 +9,12 @@ from django import forms
 # Create your models here.
 
 
-status = (('Active','Active'),('Complete','Complete'),('On Hold','On Hold'))
+status = (('Active','Active'),('Complete','Complete'),('On Hold','On Hold'),('Past Due','Past Due'))
 
 class Project(models.Model):
     project_name = models.CharField(max_length=256)
     worker = models.ForeignKey(User,related_name='projects',null=True,on_delete=models.SET_NULL)
+    created_by = models.ForeignKey(User,related_name='created',null=True,on_delete=models.SET_NULL)
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     due_date = models.DateTimeField()
@@ -33,9 +34,23 @@ class Project(models.Model):
     def approved_comments(self):
         return self.comments.filter(approved_comment=True)
 
+    def checkStatus(self):
+        today = date.today()
+        dt = self.due_date.date()
+        if dt < today:
+            self.status = 'Past Due'
+        self.save()
+
+    def markComplete(self):
+        today = date.today()
+        self.completed_on = today
+        self.status = 'Complete'
+        self.save()
+
     class Meta():
         ordering = ['-created_at']
         unique_together = ['worker','project_name']
+
 
 class Comment(models.Model):
     project = models.ForeignKey(Project,null=True,on_delete=models.CASCADE,related_name='comments')
