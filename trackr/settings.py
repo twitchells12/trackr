@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'projects',
     'bootstrap4',
     'bootstrap_datepicker_plus',
-    'bootstrap_modal_forms',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

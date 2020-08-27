@@ -12,6 +12,7 @@ from django import forms
 status = (('Active','Active'),('Complete','Complete'),('On Hold','On Hold'),('Past Due','Past Due'))
 
 class Project(models.Model):
+    id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=256)
     worker = models.ForeignKey(User,related_name='projects',null=True,on_delete=models.SET_NULL)
     created_by = models.ForeignKey(User,related_name='created',null=True,on_delete=models.SET_NULL)

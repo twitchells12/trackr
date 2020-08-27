@@ -13,16 +13,19 @@ from .models import Project,Comment
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from teams.models import Team,TeamMember
-
+from .filters import ProjectFilter
 
 @login_required
 def projectList(request):
     projects = Project.objects.all()
+
+    myFilter = ProjectFilter(request.GET, queryset=projects)
+    projects = myFilter.qs
+
     for project in projects:
         project.checkStatus()
-    context = {'projects':projects}
+    context = {'projects':projects,'myFilter':myFilter}
     return render(request, 'projects/project_list.html',context)
-
 
 @login_required
 def userProjects(request):

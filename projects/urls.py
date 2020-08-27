@@ -9,6 +9,7 @@ urlpatterns = [
     path('',views.projectList,name='all'),
     path('new/',views.CreateProject.as_view(),name='create'),
     path('by/',views.userProjects,name='for_user'),
+    # path('search/',views.projectSearch,name='search'),
     path("project/<int:pk>/",views.ProjectDetail.as_view(),name="single"),
     path("delete/<int:pk>/",views.DeleteProject.as_view(),name="delete"),
     path("complete/<int:pk>/",views.completeProject,name="complete"),
