@@ -1,5 +1,6 @@
 {% extends "projects/project_base.html" %}
 {% block proj_content %}
+
 <div class="modal fade" id="projectDeleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -27,4 +28,11 @@
     </div>
   </div>
 </div>
+
+<script>
+$(window).on('load',function(){
+    $('#projectDeleteModal').modal({show:true});
+});
+
+</script>
 {% endblock %}
