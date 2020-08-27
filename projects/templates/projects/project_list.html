@@ -1,6 +1,7 @@
 {% extends "projects/project_base.html" %}
 {% load bootstrap4 %}
 {% block proj_content %}
+{{ form.media }}
 <br>
 
 <div class="d-flex justify-content-between align-items-center row">
@@ -59,13 +60,13 @@
         </button>
       </div>
       <div class="modal-body">
-        <form method="get">
-          <div class="form-group">
-            {% bootstrap_form myFilter.form %}
-            {% comment %} {{myFilter.form}} {% endcomment %}
-            <button class="btn btn-primary" type="submit">Search</button>
-          </div>
-        </form>
+        <div class="form-group">
+          <form method="GET">
+              {% comment %} {% bootstrap_form myFilter.form %} {% endcomment %}
+              {{myFilter.form.as_p}}
+              <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
