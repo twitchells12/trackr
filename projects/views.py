@@ -7,7 +7,6 @@ from django.http import Http404,request
 from django.views import generic
 from bootstrap_datepicker_plus import DatePickerInput
 from braces.views import SelectRelatedMixin
-from django.db.models import Count
 from .forms import ProjForm, CommentForm
 from .models import Project,Comment
 from accounts.models import UserProfile
