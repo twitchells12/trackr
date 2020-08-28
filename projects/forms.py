@@ -6,7 +6,8 @@ from bootstrap_datepicker_plus import DatePickerInput
 class ProjForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['project_name','description','created_by','worker','completed_on','team','due_date']
+        fields = ['project_name','description','created_by','worker',
+                    'completed_on','team','due_date','attachment']
         widgets = {
             'completed_on':DatePickerInput(),
             }

@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -22,6 +23,7 @@ class Project(models.Model):
     status = models.CharField(max_length=20,choices=status)
     completed_on = models.DateTimeField(blank=True,null=True)
     team = models.ForeignKey(Team,related_name='projects',null=True,blank=True,on_delete=models.SET_NULL)
+    attachment = models.FileField(null=True,blank=True)
 
     def __str__(self):
         return self.project_name

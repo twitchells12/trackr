@@ -12,7 +12,7 @@ class ProjectFilter(django_filters.FilterSet):
     class Meta:
         model = Project
         fields = '__all__'
-        exclude = ['description','completed_on','created_at','created_by']
+        exclude = ['description','completed_on','created_at','created_by','attachment']
 
         widgets = {
             'id': forms.TextInput(attrs={'class':"form-control"}),

@@ -83,6 +83,15 @@
   </div>
 </div>
 <br>
+
+<div class="container">
+  {{project.attachment}}
+  {% for file in project.attachment %}
+    <p>{{file}}</p>
+  {% endfor %}
+
+</div>
+
 <a class="btn btn-primary btn-comment" href="{% url 'projects:add_comment' pk=project.pk %}">Add Comment</a>
 
 <div class="container-fluid">
@@ -115,39 +124,5 @@
 </div>
 
 
-
-
-<div class="modal fade" id="projectDeleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Delete Project: <strong>{{project.project_name}}</strong> ?</h5>
-          <a href="javascript:history.go(-1)"><button type="button" class="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button></a>
-      </div>
-      <div class="modal-body">
-        <form method="post">
-          {% csrf_token %}
-          <div class="container">
-            <div class="row">
-              <div class="col text-center">
-                <input type="submit" class="btn btn-danger btn-large mx-auto" value="Confirm Delete">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-$('.deletemodal').on('click',function(){
-    $('#projectDeleteModal').modal({show:true});
-});
-
-</script>
 
 {% endblock %}

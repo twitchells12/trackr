@@ -31,7 +31,7 @@ MEDIA_DIR = os.path.join(BASE_DIR,'static/images')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
 ALLOWED_HOSTS = ['st-trackr.herokuapp.com','127.0.0.1']
 

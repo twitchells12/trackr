@@ -42,8 +42,18 @@ class ProjectDetail(SelectRelatedMixin, LoginRequiredMixin,generic.DetailView):
     select_related = ("worker",)
 
 
+# class UploadView(LoginRequiredMixin, generic.CreateView):
+#     model = Attachment
+#     project = Project
+#     fields = ['file', 'project','added_by']
+#     success_url = reverse_lazy('projects:all')
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['documents'] = Attachment.objects.all()
+#         return context
+
 class CreateProject(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
-    fields = ['project_name','description','created_by','worker','status','due_date','completed_on','team']
+    fields = ['project_name','description','created_by','worker','status','due_date','completed_on','team','attachment']
     model = Project
 
     def get_form(self):
@@ -63,7 +73,7 @@ class CreateProject(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
 class EditProject(LoginRequiredMixin,SelectRelatedMixin,generic.UpdateView):
     model = Project
     select_related = ("worker",)
-    fields = ['description','status','worker','due_date','completed_on','team']
+    fields = ['description','status','worker','due_date','completed_on','team','attachment']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy("projects:all")
     def get_form(self):
