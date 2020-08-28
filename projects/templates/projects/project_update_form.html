@@ -1,5 +1,5 @@
 {% extends "projects/project_base.html" %}
-{% load bootstrap4 %}
+{% load bootstrap %}
 {% block proj_content %}
 
 	<div class="container">
@@ -8,7 +8,7 @@
 			<div class="container">
 	    <form method="post">
 	        {% csrf_token %}
-	        {% bootstrap_form form %}
+	        {{ form|bootstrap }}
 	        <input type="submit" class='btn btn-primary btn-large' value="Update">
 	        <a class="btn btn-simple btn-large btn-default mx-auto" href="javascript:history.go(-1)">Cancel</a>
 	    </form>

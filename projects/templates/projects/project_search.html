@@ -1,5 +1,5 @@
 {% extends "projects/project_base.html" %}
-{% load bootstrap4 %}
+{% load bootstrap %}
 {% block proj_content %}
 <br>
 <div class="container">
@@ -54,7 +54,7 @@
       </div>
       <div class="modal-body">
         <form method="get" action="{% url 'projects:search' %}">
-          {% bootstrap_form myFilter.form %}
+          {{ myFilter.form|bootstrap }}
           <button class="btn btn-primary" type="submit">Search</button>
         </form>
       </div>

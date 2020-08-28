@@ -22,7 +22,7 @@
         </li>
         <li class="list-group-item">
           <strong>Assigned to:</strong>
-          {{project.worker}}
+          <a href="{% url 'projects:worker' pk=project.pk %}">{{project.worker}}</a>
         </li>
         <li class="list-group-item">
           <strong>Created by:</strong> {{project.created_by}}

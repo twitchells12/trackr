@@ -1,5 +1,5 @@
 {% extends "projects/project_base.html" %}
-{% load bootstrap4 %}
+{% load bootstrap %}
 {% block proj_content %}
 {{ form.media }}
 <br>
@@ -62,8 +62,7 @@
       <div class="modal-body">
         <div class="form-group">
           <form method="GET">
-              {% comment %} {% bootstrap_form myFilter.form %} {% endcomment %}
-              {{myFilter.form.as_p}}
+              {{myFilter.form|bootstrap}}
               <button class="btn btn-primary" type="submit">Search</button>
           </form>
         </div>
