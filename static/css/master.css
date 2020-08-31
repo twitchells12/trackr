@@ -6,3 +6,8 @@
   {
     font-size: 40px !important;
   }
+  
+.list-group-item {
+  height: 10px;
+  padding: 3px 10px
+}
