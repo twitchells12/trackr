@@ -1,16 +1,15 @@
-<div style="padding:40px;margin:40px;border:1px solid #ccc">
+{% extends "projects/project_base.html" %}
+{% load bootstrap %}
+{% block proj_content %}
+
+<div class="container">
     <h1>Django File Upload</h1>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Submit</button>
+      {{ form|bootstrap }}
+      <input type="submit" class='btn btn-primary btn-large' value="Submit">
     </form><hr>
-    <ul>
-    {# {% for document in documents %}
-        <li>
-            <a href="{{ document.file.url }}">{{ document.file.name }}</a>
-            <small>{{ document.file.size|filesizeformat }}</small>
-        </li>
-    {% endfor %} #}
-    </ul>
 </div>
+
+
+{% endblock %}
