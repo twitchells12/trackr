@@ -1,6 +1,15 @@
 {% extends "projects/project_base.html" %}
 {% block proj_content %}
-
+<style media="screen">
+  .list-group-item{
+    padding-top: 5px;
+    height:35px;
+  }
+  .editbuttons{
+    font-size: 14px;
+    padding-top: 0px;
+  }
+</style>
 
 <br>
 <div class="container">
@@ -86,11 +95,11 @@
 			{% if user.is_authenticated or comment.approved_comment %}
 
   				<div class="col-auto mb-3">
-  					<div class="card" style="width: 18rem;">
+  					<div class="card" style="width: 18rem; font-size:12px;">
   						<div class="card-body">
-  							<h5 class="card-header mb-2">{{ comment.title }}
+  							<h6 class="card-header mb-2">{{ comment.title }}
                   {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
-                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}" class='pl-6'>
+                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}">
                       <span class="fa fa-remove text-danger" aria-hidden='true'></span>
                     </a>
                   {% endif %}
