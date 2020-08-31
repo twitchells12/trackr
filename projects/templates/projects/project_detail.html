@@ -1,5 +1,15 @@
 {% extends "projects/project_base.html" %}
 {% block proj_content %}
+<style media="screen">
+  .list-group-item{
+    padding-top: 5px;
+    height:35px;
+  }
+  .editbuttons{
+    font-size: 14px;
+    padding-top: 0px;
+  }
+</style>
 
 <br>
 <div class="container">
@@ -7,80 +17,70 @@
 </div>
 <br>
 <div class="card-deck">
-    <div class="card col-sm-8">
-      <div class="card-body">
-        <h3 class="card-title">{{ project.project_name }}</h3>
-        <div class="card-text">{{ project.description }}</div>
-      </div>
+  <div class="card col-sm-8">
+    <div class="card-body">
+      <h3 class="card-title">{{ project.project_name }}</h3>
+      <div class="card-text">{{ project.description }}</div>
     </div>
+  </div>
 
-    <div class="card col-sm-4 p-0">
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-					<strong>Project ID:</strong>
-          {{project.id}}
-        </li>
-        <li class="list-group-item">
-          <strong>Assigned to:</strong>
-          <a href="{% url 'projects:worker' pk=project.pk %}">{{project.worker}}</a>
-        </li>
-        <li class="list-group-item">
-          <strong>Created by:</strong> {{project.created_by}}
-        </li>
-        <li class="list-group-item">
-          <strong>Due date:</strong> {{ project.due_date.date }}
-        </li>
+  <div class="card col-sm-4 p-0">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+				<strong>Project ID:</strong>
+        {{project.id}}
+      </li>
+      <li class="list-group-item">
+        <strong>Assigned to:</strong>
+        <a href="{% url 'projects:worker' pk=project.pk %}">{{project.worker}}</a>
+      </li>
+      <li class="list-group-item">
+        <strong>Created by:</strong> {{project.created_by}}
+      </li>
+      <li class="list-group-item">
+        <strong>Due date:</strong> {{ project.due_date.date }}
+      </li>
 
-        {% if project.status == 'Complete' %}
-          <li class="list-group-item">
-            <strong>Completed on:</strong> {{ project.completed_on.date}}
-          </li>
-          <li class="list-group-item">
-            <strong>Completed:</strong> Yes
-          </li>
-        {% else %}
-          <li class="list-group-item">
-            <strong>Completed:</strong> No
-          </li>
-        {% endif %}
+      {% if project.status == 'Complete' %}
         <li class="list-group-item">
-          <strong>Attachments:</strong>
-          <a href="#attachModal" data-toggle="modal" data-target="#attachModal">{{files.count}}</a>
+          <strong>Completed on:</strong> {{ project.completed_on.date}}
         </li>
         <li class="list-group-item">
-          <strong>Team Assigned:</strong>
-					{% if project.team == Null %}
-						{{project.team}}
-					{% else %}
-						<a href="{% url 'teams:single' slug=project.team|slugify %}">{{project.team}}</a></td>
-					{% endif %}
+          <strong>Completed:</strong> Yes
         </li>
-				<li class="list-group-item">
-					{% if user.is_superuser %}
-						<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
-							<span class="fa fa-edit text-danger" aria-hidden='true'></span>
-							<span class='text-danger icon-label'></span>Edit
-						</a>
-            <a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple">
-							<span class="fa fa-remove text-danger" aria-hidden='true'></span>
-							<span class='text-danger icon-label'></span>Delete
-						</a>
-					{% else %}
-						{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager %}
-              <a href="{% url 'projects:complete' pk=project.pk %}" title:'complete' class="btn btn-simple">
-                <span class="fa fa-check text-success" aria-hidden='true'></span> Complete
-              </a>
-							<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editproj">
-								<span class="fa fa-edit text-danger" aria-hidden='true'></span> Edit
-							</a>
-							<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple">
-								<span class="fa fa-remove text-danger" aria-hidden='true'></span> Delete
-							</a>
-						{% endif %}
-					{% endif %}
-				</li>
-      </ul>
-    </div>
+      {% else %}
+        <li class="list-group-item">
+          <strong>Completed:</strong> No
+        </li>
+      {% endif %}
+      <li class="list-group-item">
+        <strong>Attachments:</strong>
+        <a href="#attachModal" data-toggle="modal" data-target="#attachModal">{{project.attachments.count}}</a>
+      </li>
+      <li class="list-group-item">
+        <strong>Team Assigned:</strong>
+				{% if project.team == Null %}
+					{{project.team}}
+				{% else %}
+					<a href="{% url 'teams:single' slug=project.team|slugify %}">{{project.team}}</a></td>
+				{% endif %}
+      </li>
+
+			{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser%}
+        <li class="list-group-item">
+          <a href="{% url 'projects:complete' pk=project.pk %}" title:'complete' class="btn btn-simple editbuttons">
+            <span class="fa fa-check text-success icon" aria-hidden='true'></span> Complete
+          </a>
+					<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editbuttons">
+						<span class="fa fa-edit text-danger icon" aria-hidden='true'></span> Edit
+					</a>
+					<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple editbuttons">
+						<span class="fa fa-remove text-danger icon" aria-hidden='true'></span> Delete
+					</a>
+        </li>
+			{% endif %}
+
+    </ul>
   </div>
 </div>
 <br>
@@ -95,11 +95,11 @@
 			{% if user.is_authenticated or comment.approved_comment %}
 
   				<div class="col-auto mb-3">
-  					<div class="card" style="width: 18rem;">
+  					<div class="card" style="width: 18rem; font-size:12px;">
   						<div class="card-body">
-  							<h5 class="card-header mb-2">{{ comment.title }}
+  							<h6 class="card-header mb-2">{{ comment.title }}
                   {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
-                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}" class='pl-6'>
+                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}">
                       <span class="fa fa-remove text-danger" aria-hidden='true'></span>
                     </a>
                   {% endif %}
@@ -129,15 +129,21 @@
       </div>
       <div class="modal-body">
         <ul>
-          {% for file in files.all %}
+          {% for file in project.attachments.all %}
            <li>
-             <a href="{{ file.file.url }}">{{ file.filename }}</a>
+            {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+              <a href="{{ file.file.url }}">{{ file.filename }}</a>
+            {% else %}
+            {{file.filename}}
+            {% endif %}
            </li>
           {% endfor %}
         </ul>
       </div>
       <div class="modal-footer">
-        <a class="btn btn-primary btn-comment" href="{% url 'projects:add_file' pk=project.pk %}">Add File</a>
+        {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+          <a class="btn btn-primary btn-comment" href="{% url 'projects:add_file' pk=project.pk %}">Add File</a>
+        {% endif %}
       </div>
     </div>
   </div>

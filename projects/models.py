@@ -75,7 +75,7 @@ class Comment(models.Model):
 
 class Attachment(models.Model):
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='attachments')
     added_by = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to=get_attachment_upload_dir, max_length=255)
 
