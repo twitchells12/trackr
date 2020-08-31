@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -11,7 +12,12 @@ from django import forms
 
 status = (('Active','Active'),('Complete','Complete'),('On Hold','On Hold'),('Past Due','Past Due'))
 
+
+def get_attachment_upload_dir(instance, filename):
+    return "/".join(["projects", "attachments", str(instance.project.id), filename])
+
 class Project(models.Model):
+    id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=256)
     worker = models.ForeignKey(User,related_name='projects',null=True,on_delete=models.SET_NULL)
     created_by = models.ForeignKey(User,related_name='created',null=True,on_delete=models.SET_NULL)
@@ -21,6 +27,7 @@ class Project(models.Model):
     status = models.CharField(max_length=20,choices=status)
     completed_on = models.DateTimeField(blank=True,null=True)
     team = models.ForeignKey(Team,related_name='projects',null=True,blank=True,on_delete=models.SET_NULL)
+
 
     def __str__(self):
         return self.project_name
@@ -65,3 +72,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.title
+
+class Attachment(models.Model):
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=get_attachment_upload_dir, max_length=255)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+    def __str__(self):
+        return f"{self.project.id} - {self.file.name}"

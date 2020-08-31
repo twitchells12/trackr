@@ -1,0 +1,15 @@
+{% extends "projects/project_base.html" %}
+{% load bootstrap %}
+{% block proj_content %}
+
+<div class="container">
+    <h1>Django File Upload</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form|bootstrap }}
+      <input type="submit" class='btn btn-primary btn-large' value="Submit">
+    </form><hr>
+</div>
+
+
+{% endblock %}

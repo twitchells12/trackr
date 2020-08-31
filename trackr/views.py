@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from projects.models import Project
-from django.contrib import messages
 from datetime import date
 
 @login_required

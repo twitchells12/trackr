@@ -3,7 +3,7 @@
 
 <br>
 <div class="container">
-  <a class="btn btn-warning btn-sm" href="javascript:history.go(-1)">&#8592; Back to List</a>
+  <a class="btn btn-warning btn-sm" href="{% url 'projects:all' %}">&#8592; Back to List</a>
 </div>
 <br>
 <div class="card-deck">
@@ -22,7 +22,7 @@
         </li>
         <li class="list-group-item">
           <strong>Assigned to:</strong>
-          {{project.worker}}
+          <a href="{% url 'projects:worker' pk=project.pk %}">{{project.worker}}</a>
         </li>
         <li class="list-group-item">
           <strong>Created by:</strong> {{project.created_by}}
@@ -30,9 +30,6 @@
         <li class="list-group-item">
           <strong>Due date:</strong> {{ project.due_date.date }}
         </li>
-        {% comment %} <li class="list-group-item">
-          <strong>Completed on:</strong> {{ project.status}}
-        </li> {% endcomment %}
 
         {% if project.status == 'Complete' %}
           <li class="list-group-item">
@@ -43,9 +40,13 @@
           </li>
         {% else %}
           <li class="list-group-item">
-            <strong>Completed:</strong> {{ task.completed|yesno:"Yes,No" }}
+            <strong>Completed:</strong> No
           </li>
         {% endif %}
+        <li class="list-group-item">
+          <strong>Attachments:</strong>
+          <a href="#attachModal" data-toggle="modal" data-target="#attachModal">{{files.count}}</a>
+        </li>
         <li class="list-group-item">
           <strong>Team Assigned:</strong>
 					{% if project.team == Null %}
@@ -83,6 +84,8 @@
   </div>
 </div>
 <br>
+
+
 <a class="btn btn-primary btn-comment" href="{% url 'projects:add_comment' pk=project.pk %}">Add Comment</a>
 
 <div class="container-fluid">
@@ -113,5 +116,36 @@
 		{% endfor %}
 	</div>
 </div>
+
+<!-- attachments modal -->
+<div class="modal fade" id="attachModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Attachments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          {% for file in files.all %}
+           <li>
+             <a href="{{ file.file.url }}">{{ file.filename }}</a>
+           </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-comment" href="{% url 'projects:add_file' pk=project.pk %}">Add File</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
 {% endblock %}

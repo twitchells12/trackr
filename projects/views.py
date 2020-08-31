@@ -6,23 +6,24 @@ from django.urls import reverse_lazy
 from django.http import Http404,request
 from django.views import generic
 from bootstrap_datepicker_plus import DatePickerInput
-from braces.views import SelectRelatedMixin
-from django.db.models import Count
-from .forms import ProjForm, CommentForm
-from .models import Project,Comment
+from .forms import ProjForm, CommentForm, AttachForm
+from .models import Project,Comment, Attachment
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from teams.models import Team,TeamMember
-
+from .filters import ProjectFilter
 
 @login_required
 def projectList(request):
     projects = Project.objects.all()
+
+    myFilter = ProjectFilter(request.GET, queryset=projects)
+    projects = myFilter.qs
+
     for project in projects:
         project.checkStatus()
-    context = {'projects':projects}
+    context = {'projects':projects,'myFilter':myFilter}
     return render(request, 'projects/project_list.html',context)
-
 
 @login_required
 def userProjects(request):
@@ -34,13 +35,16 @@ def userProjects(request):
     return render(request, 'projects/user_project_list.html',context)
 
 
-class ProjectDetail(SelectRelatedMixin, LoginRequiredMixin,generic.DetailView):
+class ProjectDetail(LoginRequiredMixin, generic.DetailView):
     model = Project
-    comments = Comment
-    select_related = ("worker",)
 
+    def get_context_data(self, **kwargs):
+        context = super(ProjectDetail, self).get_context_data(**kwargs)
+        context['comments'] = Comment.objects.all()
+        context['files'] = Attachment.objects.all()
+        return context
 
-class CreateProject(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
+class CreateProject(LoginRequiredMixin, generic.CreateView):
     fields = ['project_name','description','created_by','worker','status','due_date','completed_on','team']
     model = Project
 
@@ -58,9 +62,8 @@ class CreateProject(LoginRequiredMixin, SelectRelatedMixin, generic.CreateView):
         self.object.save()
         return super().form_valid(form)
 
-class EditProject(LoginRequiredMixin,SelectRelatedMixin,generic.UpdateView):
+class EditProject(LoginRequiredMixin, generic.UpdateView):
     model = Project
-    select_related = ("worker",)
     fields = ['description','status','worker','due_date','completed_on','team']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy("projects:all")
@@ -70,18 +73,16 @@ class EditProject(LoginRequiredMixin,SelectRelatedMixin,generic.UpdateView):
         form.fields['completed_on'].widget = DatePickerInput()
         return form
 
-class DeleteProject(LoginRequiredMixin, SelectRelatedMixin, generic.DeleteView):
+class DeleteProject(LoginRequiredMixin, generic.DeleteView):
     model = Project
-    select_related = ("worker",)
     success_url = reverse_lazy("projects:all")
 
     def delete(self, *args, **kwargs):
         messages.success(self.request, "Project Deleted")
         return super().delete(*args, **kwargs)
 
-class WorkerView(LoginRequiredMixin,SelectRelatedMixin,generic.DetailView):
+class WorkerView(LoginRequiredMixin, generic.DetailView):
     model = Project
-    select_related = ("worker",)
     template_name = 'projects/worker_profile.html'
 
 @login_required
@@ -106,7 +107,6 @@ def add_comment(request, pk):
         form.fields['author'].initial = request.user
     return render(request, 'projects/comment_form.html', {'form': form})
 
-
 @login_required
 def comment_approve(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
@@ -119,3 +119,20 @@ def comment_remove(request, pk):
     project_pk = comment.project.pk
     comment.delete()
     return redirect('projects:single', pk=project_pk)
+
+
+
+@login_required
+def add_file(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == "POST":
+        form = AttachForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.save(commit=False)
+            file.project = project
+            file.save()
+            return redirect('projects:single', pk=project.pk)
+    else:
+        form = AttachForm()
+        form.fields['added_by'].initial = request.user
+    return render(request, 'projects/attachment_form.html', {'form': form})
