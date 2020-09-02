@@ -1,156 +1,266 @@
 {% extends "projects/project_base.html" %}
+{% load bootstrap4 %}
 {% block proj_content %}
-<style media="screen">
-  .list-group-item{
-    padding-top: 5px;
-    height:35px;
-  }
-  .editbuttons{
-    font-size: 14px;
-    padding-top: 0px;
-  }
+<!-- css style -->
+<style>
+h3{
+  font-family: 'Merriweather Sans', sans-serif;
+}
+.desc {
+  padding-bottom: 50px;
+}
+.avatar-sm{
+  width:50px;
+  height:50px;
+}
+.dropbtn {
+  background-color: #ffffff;
+  color: black;
+  padding: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #f1f1f1;
+  min-width: 80px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px 10px;
+  font-size: 12px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+
+.comments{
+  border: .5px solid;
+}
+.isDisabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
+  pointer-events: none;
+}
+
 </style>
 
-<br>
-<div class="container">
-  <a class="btn btn-warning btn-sm" href="{% url 'projects:all' %}">&#8592; Back to List</a>
-</div>
-<br>
-<div class="card-deck">
-  <div class="card col-sm-8">
-    <div class="card-body">
-      <h3 class="card-title">{{ project.project_name }}</h3>
-      <div class="card-text">{{ project.description }}</div>
-    </div>
-  </div>
 
-  <div class="card col-sm-4 p-0">
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-				<strong>Project ID:</strong>
-        {{project.id}}
-      </li>
-      <li class="list-group-item">
-        <strong>Assigned to:</strong>
-        <a href="{% url 'projects:worker' pk=project.pk %}">{{project.worker}}</a>
-      </li>
-      <li class="list-group-item">
-        <strong>Created by:</strong> {{project.created_by}}
-      </li>
-      <li class="list-group-item">
-        <strong>Due date:</strong> {{ project.due_date.date }}
-      </li>
-
-      {% if project.status == 'Complete' %}
-        <li class="list-group-item">
-          <strong>Completed on:</strong> {{ project.completed_on.date}}
-        </li>
-        <li class="list-group-item">
-          <strong>Completed:</strong> Yes
-        </li>
-      {% else %}
-        <li class="list-group-item">
-          <strong>Completed:</strong> No
-        </li>
-      {% endif %}
-      <li class="list-group-item">
-        <strong>Attachments:</strong>
-        <a href="#attachModal" data-toggle="modal" data-target="#attachModal">{{project.attachments.count}}</a>
-      </li>
-      <li class="list-group-item">
-        <strong>Team Assigned:</strong>
-				{% if project.team == Null %}
-					{{project.team}}
-				{% else %}
-					<a href="{% url 'teams:single' slug=project.team|slugify %}">{{project.team}}</a></td>
-				{% endif %}
-      </li>
-
-			{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser%}
-        <li class="list-group-item">
-          <a href="{% url 'projects:complete' pk=project.pk %}" title:'complete' class="btn btn-simple editbuttons">
-            <span class="fa fa-check text-success icon" aria-hidden='true'></span> Complete
-          </a>
-					<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editbuttons">
-						<span class="fa fa-edit text-danger icon" aria-hidden='true'></span> Edit
-					</a>
-					<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple editbuttons">
-						<span class="fa fa-remove text-danger icon" aria-hidden='true'></span> Delete
-					</a>
-        </li>
-			{% endif %}
-
-    </ul>
-  </div>
-</div>
-<br>
+<div class="row mt-3">
 
 
-<a class="btn btn-primary btn-comment" href="{% url 'projects:add_comment' pk=project.pk %}">Add Comment</a>
+  <div class="col-lg-6 col-xl-8">
+    <!-- Top Card -->
+    <div class="d-block card">
+      <div class="card-body">
+        <!--header section -->
+        <h3 style="background-color: #ffffff;">{{ project.project_name }}
+          <!--dropdown section -->
+          <div class="dropdown float-right">
+            <button onclick="myFunction()" class="dropbtn" data-toggle="dropdown" style="font-size:12px;">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+            </button>
+            <div id="myDropdown" class="dropdown-content">
 
-<div class="container-fluid">
-	<br>
-	<div class="row justify-content-center">
-		{% for comment in project.comments.all %}
-			{% if user.is_authenticated or comment.approved_comment %}
+              {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser%}
+                <a href="{% url 'projects:complete' pk=project.pk %}">Complete</a>
+                <a href="{% url 'projects:edit' pk=project.pk %}">Edit</a>
+                <a href="{% url 'projects:delete' pk=project.pk %}">Delete</a>
+              {% else %}
+                <a href="{% url 'projects:complete' pk=project.pk %}" class='isDisabled'>Complete</a>
+                <a href="{% url 'projects:edit' pk=project.pk %}" class='isDisabled'> Edit</a>
+                <a href="{% url 'projects:delete' pk=project.pk %}" class='isDisabled'>Delete</a>
+              {% endif %}
 
-  				<div class="col-auto mb-3">
-  					<div class="card" style="width: 18rem; font-size:12px;">
-  						<div class="card-body">
-  							<h6 class="card-header mb-2">{{ comment.title }}
-                  {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
-                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}">
-                      <span class="fa fa-remove text-danger" aria-hidden='true'></span>
-                    </a>
-                  {% endif %}
-                </h5>
-  							<p class="card-text mb-0 text-muted">Comment: </p>
-  							<p class="card-text">{{ comment.text }}</p>
-  							<p class="card-text text-muted text-right">Author: {{ comment.author }}</p>
-  						</div>
-  					</div>
-  				</div>
-			{% endif %}
-		{% empty %}
-		    <p>No comments here yet :(</p>
-		{% endfor %}
-	</div>
-</div>
+            </div>
+          </div>
+        </h3>
 
-<!-- attachments modal -->
-<div class="modal fade" id="attachModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Attachments</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <ul>
-          {% for file in project.attachments.all %}
-           <li>
-            {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
-              <a href="{{ file.file.url }}">{{ file.filename }}</a>
-            {% else %}
-            {{file.filename}}
-            {% endif %}
-           </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="modal-footer">
-        {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
-          <a class="btn btn-primary btn-comment" href="{% url 'projects:add_file' pk=project.pk %}">Add File</a>
+        {% if project.status == 'Active' %}
+          <div><span class="badge badge-pill badge-primary">{{project.status}}</span></div>
+        {% elif project.status == 'Hold' %}
+          <div><span class="badge badge-warning">{{project.status}}</span></div>
+        {% elif project.status == 'Past Due' %}
+          <div><span class="badge badge-danger">{{project.status}}</span></div>
+        {% else %}
+          <div><span class="badge badge-success">{{project.status}}</span></div>
         {% endif %}
+        <!-- Project detail section -->
+        <br>
+        <h6>Project Description:</h6>
+        <p class='text-muted mb-2 desc'>{{ project.description }}</p>
+
+        <div class="row ml-2">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <h6>Due Date</h6>
+              <p><small class="text-muted">{{project.due_date.date}}</small></p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <h6>Date Completed</h6>
+
+              {% if project.status == 'Complete' %}
+                <p><small class="text-muted">{{project.completed_on.date}}</small></p>
+              {% else %}
+                <p><small class="text-muted">In Work</small></p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3 ml-2">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <h6>Worker</h6>
+              <a href="{% url 'projects:worker' pk=project.pk %}" data-toggle='tooltip' data-pacement='top' class='d-inline-block' title="{{project.worker}}">
+                <img class="rounded-circle img-thumnail avatar-sm" src="{{project.worker.userprofile.profile_pic.url}}">
+              </a>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <h6>Team</h6>
+              <a href="{% url 'teams:single' slug=project.team|slugify %}" data-toggle='tooltip' data-pacement='top' title="{{project.team}}" class='d-inline-block'>
+                <img class="rounded-circle img-thumnail avatar-sm" src="{{project.team.team_pic.url}}">
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  <!--Comment section Lower Card -->
+    <div class="d-block card mt-3">
+      <div class="card-body">
+        <div class="mt-0">
+          <h5>Comments ({{project.comments.count}})</h5>
+          <form class="form-inline" action="" method="post">
+            {% csrf_token %}
+            <div class="form-row align-items-center">
+              <div class="col-auto">
+                <textarea class="form-control" name="comment-body" rows="1" cols='50' placeholder="Add comment here..." required></textarea>
+                <input class="btn btn-sm btn-primary" type="submit" name="add_comment" value="Add Comment">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class='container mt-4'>
+          {% for comment in project.comments.all %}
+            {% if user.is_authenticated or comment.approved_comment %}
+              <div class="media mb-2">
+                <img src="{{comment.author.userprofile.profile_pic.url}}" class="mr-3 rounded-circle img-thumnail avatar-sm">
+                <div class="media-body">
+                  <h5 class="ml-4">{{comment.author}}
+                    {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+                      <a href="{% url 'projects:comment_remove' pk=comment.pk %}">
+                        <span class="fa fa-remove text-danger" aria-hidden='true'></span>
+                      </a>
+                    {% endif %}
+                  </h5>
+                  <p class='text-muted ml-5'>{{ comment.text }}</p>
+                </div>
+              </div>
+            {% endif %}
+          {% empty %}
+              <p>No comments yet...</p>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Right Card -->
+  <div class="col-lg-6 col-xl-4">
+    <div class="d-block card ">
+      <div class="card-body">
+          <h5 class='card-title mb-3'>Attachments ({{project.attachments.count}})</h5>
+          {% for file in project.attachments.all %}
+            <div class="mb-2 shadow-none border card">
+              <div class="align-items-center row">
+                <div class="col pl-4 mt-2 mb-2">
+                  <a class='text-muted' href="{{ file.file.url }}">{{ file.filename }}</a>
+                </div>
+                <div class="col-auto mr-3">
+                  <a class='text-muted' href="{{ file.file.url }}">
+                    <i class='fa fa-download'></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+
+          <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group input-group-sm mb-3 mt-4">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="attachment_file_input" name="attachment_file_input" />
+                <label class="custom-file-label" for="attachment_file_input"></label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary">Upload</button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
 
+
+
+<!-- js script -->
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+</script>
 
 
 

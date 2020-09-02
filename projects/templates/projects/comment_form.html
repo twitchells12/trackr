@@ -2,13 +2,18 @@
 {% load bootstrap %}
 {% block proj_content %}
 
-  <h1>New Comment for Project {{comment.project.id}}</h1>
-  <form method="post">
+
+
+<h3>New Comment for Project: <strong>{{project.project_name}}</strong> </h3>
+  <div class="d-flex p-2 justify-content-center">
+    <form method="post" class='forms'>
+
     {% csrf_token %}
     {{ form|bootstrap }}
     <a class="btn btn-default btn-large" href="javascript:history.go(-1)" role="button">Cancel</a>
-    <input type="submit" class='btn btn-primary btn-large' value="Submit">
-  </form>
+    <input type="submit" class='btn btn-primary btn-large input-sm' value="Submit">
 
+  </form>
+</div>
 
 {% endblock %}

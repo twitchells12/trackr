@@ -25,10 +25,13 @@ class CommentForm(forms.ModelForm):
 
     class Meta():
         model = Comment
-        fields = ('author','title','text')
+        fields = ('author','text')
 
 class AttachForm(forms.ModelForm):
 
     class Meta():
         model = Attachment
         fields = ('file','added_by')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.widget.attrs.update({'size': '12'})

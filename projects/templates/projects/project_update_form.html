@@ -2,17 +2,17 @@
 {% load bootstrap %}
 {% block proj_content %}
 {{form.media}}
-<div class="container">
-	<br>
-	<h3>Update Project: <strong>{{project.project_name}}</strong></h3>
-		<div class="container">
-    <form method="post">
-        {% csrf_token %}
-        {{ form|bootstrap }}
-        <input type="submit" class='btn btn-primary btn-large' value="Update">
-        <a class="btn btn-simple btn-large btn-default mx-auto" href="javascript:history.go(-1)">Cancel</a>
-    </form>
-		</div>
+
+<br>
+<h3>Update Project: <strong>{{project.project_name}}</strong></h3>
+<div class="d-flex p-2 justify-content-center">
+  <form method="post">
+      {% csrf_token %}
+      {{ form|bootstrap }}
+      <input type="submit" class='btn btn-primary btn-large' value="Update">
+      <a class="btn btn-simple btn-large btn-default mx-auto" href="javascript:history.go(-1)">Cancel</a>
+  </form>
 </div>
+
 
 {% endblock %}

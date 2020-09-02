@@ -2,9 +2,8 @@
 {% load bootstrap %}
 {% block proj_content %}
 {{ form.media }}
-<br>
 
-<div class="d-flex justify-content-between align-items-center row">
+<div class="d-flex justify-content-between align-items-center row mt-3">
   <div class="col-sm-5"><h1>All Projects</h1></div>
   <div class="col-sm-2">
     <div class="btn-group" role="group" aria-label="Basic example">
@@ -24,7 +23,7 @@
       <div class="col-sm-1 text-muted">Worker</div>
       <div class="col-sm-2 text-muted">Team</div>
     {% for project in projects %}
-      <a href="{% url 'projects:single' pk=project.pk %}" class="list-group-item list-group-item-action">
+      <a href="{% url 'projects:detail' pk=project.pk %}" class="list-group-item list-group-item-action">
         <div class="d-flex justify-content-between align-items-center row">
           <div class="col-sm-1"><strong>{{project.pk}}</strong></div>
           <div class="col-sm-5"><strong>{{project.project_name}}</strong></div>
@@ -45,9 +44,9 @@
       </a>
     {% endfor %}
 
+    </div>
   </div>
 </div>
-
 
 
 <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">

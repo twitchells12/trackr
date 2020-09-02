@@ -62,8 +62,7 @@ class Project(models.Model):
 class Comment(models.Model):
     project = models.ForeignKey(Project,null=True,on_delete=models.CASCADE,related_name='comments')
     author = models.ForeignKey(User,related_name='author',null=True,on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, blank=True,null=True)
-    text = models.TextField(blank=True,null=True)
+    text = models.CharField(max_length=256,blank=True,null=True)
     approved_comment = models.BooleanField(default=False,null=True)
 
     def approve(self):
@@ -84,3 +83,11 @@ class Attachment(models.Model):
 
     def __str__(self):
         return f"{self.project.id} - {self.file.name}"
+
+class Task(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='task')
+    task = models.CharField(max_length=256,null=True,blank=True)
+    completed = models.BooleanField(default=False,blank=True,null=True)
+
+    def __str__(self):
+        return self.task

@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.http import Http404,request
 from django.views import generic
 from bootstrap_datepicker_plus import DatePickerInput
 from .forms import ProjForm, CommentForm, AttachForm
-from .models import Project,Comment, Attachment
+from .models import Project,Comment, Attachment,Task
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from teams.models import Team,TeamMember
@@ -35,14 +35,34 @@ def userProjects(request):
     return render(request, 'projects/user_project_list.html',context)
 
 
-class ProjectDetail(LoginRequiredMixin, generic.DetailView):
-    model = Project
 
-    def get_context_data(self, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(**kwargs)
-        context['comments'] = Comment.objects.all()
-        context['files'] = Attachment.objects.all()
-        return context
+def handle_add_comment(request, project):
+    if not request.POST.get("add_comment"):
+        return
+    Comment.objects.create(author=request.user, project=project, text=request.POST["comment-body"])
+
+
+
+@login_required
+def projectDetail(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    comments = Comment.objects.all()
+    attachments = Attachment.objects.all()
+    handle_add_comment(request, project)
+
+    if request.FILES.get("attachment_file_input"):
+        file = request.FILES.get("attachment_file_input")
+
+        Attachment.objects.create(
+            project=project, added_by=request.user, file=file
+        )
+        return redirect("projects:detail", pk=project.pk)
+
+    context = {'project':project,'comments':comments,'attachments':attachments}
+
+    return render(request, 'projects/project_detail.html',context)
+
+
 
 class CreateProject(LoginRequiredMixin, generic.CreateView):
     fields = ['project_name','description','created_by','worker','status','due_date','completed_on','team']
@@ -66,7 +86,7 @@ class EditProject(LoginRequiredMixin, generic.UpdateView):
     model = Project
     fields = ['description','status','worker','due_date','completed_on','team']
     template_name_suffix = '_update_form'
-    success_url = reverse_lazy("projects:all")
+    success_url = reverse_lazy("projects:detail",kwargs={"pk":model.pk})
     def get_form(self):
         form = super().get_form()
         form.fields['due_date'].widget = DatePickerInput()
@@ -89,7 +109,7 @@ class WorkerView(LoginRequiredMixin, generic.DetailView):
 def completeProject(request, pk):
     projects = Project.objects.get(pk=pk)
     projects.markComplete()
-    return redirect ('projects:single', pk=projects.pk)
+    return redirect ('projects:detail', pk=projects.pk)
 
 
 @login_required
@@ -101,24 +121,24 @@ def add_comment(request, pk):
             comment = form.save(commit=False)
             comment.project = project
             comment.save()
-            return redirect('projects:single', pk=project.pk)
+            return redirect('projects:detail', pk=project.pk)
     else:
         form = CommentForm()
         form.fields['author'].initial = request.user
-    return render(request, 'projects/comment_form.html', {'form': form})
+    return render(request, 'projects/comment_form.html', {'form': form,'project':project})
 
 @login_required
 def comment_approve(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.approve()
-    return redirect('post_detail', pk=comment.project.pk)
+    return redirect('project_detail', pk=comment.project.pk)
 
 @login_required
 def comment_remove(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     project_pk = comment.project.pk
     comment.delete()
-    return redirect('projects:single', pk=project_pk)
+    return redirect('projects:detail', pk=project_pk)
 
 
 
@@ -131,7 +151,7 @@ def add_file(request, pk):
             file = form.save(commit=False)
             file.project = project
             file.save()
-            return redirect('projects:single', pk=project.pk)
+            return redirect('projects:detail', pk=project.pk)
     else:
         form = AttachForm()
         form.fields['added_by'].initial = request.user
