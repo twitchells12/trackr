@@ -11,5 +11,9 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 30px;            /* Footer height */
+  height: 30px;        /* Footer height */
+}
+.maindetail{
+  margin-bottom: 100px;
+  margin-top: 20px;
 }
