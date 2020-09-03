@@ -7,6 +7,7 @@ from django.http import Http404,request
 from django.views import generic
 from bootstrap_datepicker_plus import DatePickerInput
 from .forms import ProjForm, CommentForm, AttachForm
+from accounts.forms import UserProfileForm
 from .models import Project,Comment, Attachment,Task
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
@@ -27,8 +28,8 @@ def projectList(request):
 
 @login_required
 def userProjects(request):
-    projects = Project.objects.filter(worker=request.user)
-    project_user = User.objects.prefetch_related("projects").get(
+    projects = Project.objects.filter(workers=request.user)
+    project_user = User.objects.prefetch_related("proj_worker").get(
                                     username__iexact=request.user.username)
 
     context = {'projects':projects,'project_user':project_user}
@@ -65,28 +66,28 @@ def projectDetail(request, pk):
 
 
 class CreateProject(LoginRequiredMixin, generic.CreateView):
-    fields = ['project_name','description','created_by','worker','status','due_date','completed_on','team']
+    fields = ['project_name','description','created_by','workers','status','due_date','completed_on','team']
     model = Project
 
     def get_form(self):
         form = super().get_form()
         form.fields['due_date'].widget = DatePickerInput()
         form.fields['completed_on'].widget = DatePickerInput()
-        form.fields['worker'].initial = self.request.user
+        form.fields['workers'].initial = self.request.user
         form.fields['created_by'].initial = self.request.user
         return form
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.worker = self.request.user
         self.object.save()
         return super().form_valid(form)
 
 class EditProject(LoginRequiredMixin, generic.UpdateView):
     model = Project
-    fields = ['description','status','worker','due_date','completed_on','team']
+    fields = ['description','status','workers','due_date','completed_on','team']
     template_name_suffix = '_update_form'
-    success_url = reverse_lazy("projects:detail",kwargs={"pk":model.pk})
+    success_url = reverse_lazy("projects:all")
+
     def get_form(self):
         form = super().get_form()
         form.fields['due_date'].widget = DatePickerInput()
@@ -100,6 +101,18 @@ class DeleteProject(LoginRequiredMixin, generic.DeleteView):
     def delete(self, *args, **kwargs):
         messages.success(self.request, "Project Deleted")
         return super().delete(*args, **kwargs)
+
+
+
+@login_required
+def workerView(request,pk):
+    user = UserProfile.objects.get(pk=pk)
+    profile = UserProfileForm(instance=user)
+
+    context = {'profile':profile}
+    return render(request, 'projects/worker_profile.html',context)
+
+
 
 class WorkerView(LoginRequiredMixin, generic.DetailView):
     model = Project

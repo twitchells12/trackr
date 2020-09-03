@@ -2,11 +2,13 @@ from django.contrib.admin import widgets
 from django import forms
 from .models import Project, Comment, Attachment
 from bootstrap_datepicker_plus import DatePickerInput
+from django.contrib.auth import get_user_model
+User=get_user_model()
 
 class ProjForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['project_name','description','created_by','worker',
+        fields = ['project_name','description','created_by','workers',
                     'completed_on','team','due_date']
         widgets = {
             'completed_on':DatePickerInput(),

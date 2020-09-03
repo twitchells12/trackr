@@ -1,0 +1,8 @@
+{% load bootstrap %}
+<h3>Update Project: <strong>{{project.project_name}}</strong></h3>
+<form method="POST" enctype='multipart/form-data'>
+	{% csrf_token %}
+	{{ form|bootstrap }}
+  <a class="btn btn-default btn-large" href="{% url 'teams:manage' slug=team.slug %}" role="button">Cancel</a>
+	<input type="submit" class='btn btn-primary btn-large' value="Submit">
+</form>

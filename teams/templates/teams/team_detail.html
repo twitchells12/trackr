@@ -1,6 +1,11 @@
 {% extends "teams/team_base.html" %}
-
 {% block pregroup %}
+<style media="screen">
+.avatar-sm{
+  width:50px;
+  height:50px;
+}
+</style>
 
   <div class="container">
     <nav class="navbar navbar-expand-lg" role="navigation" id="navbar">
@@ -15,12 +20,16 @@
           {% else %}
           <a href="{% url 'teams:leave' slug=team.slug %}" class="btn btn-sm btn-warning"><span class="fa fa-minus-circle"></span> Leave</a>
           {% endif %}
-          {% if user.is_superuser %}
+          {% if user.is_superuser or user.userprofile.is_manager %}
             <a href="{% url 'teams:delete' slug=team.slug %}" class="btn btn-sm btn-danger"><span class="fa fa-times-circle-o"></span> Delete</a>
+            <a href="{% url 'teams:manage' slug=team.slug %}" class="btn btn-sm btn-warning"><span class="fa fa-pencil-square-o"></span> Manage</a>
           {% endif %}
         </div>
       </div>
     </nav>
+    <a href="#" data-toggle='tooltip' data-pacement='top' title="{{team}}" class='d-inline-block'>
+      <img class="rounded-circle img-thumnail avatar-sm" src="{{team.team_pic.url}}">
+    </a>
   </div>
 
 {% endblock %}

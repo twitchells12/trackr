@@ -1,5 +1,5 @@
 {% load bootstrap %}
-<form method="POST" action="{% url 'teams:create' %}" id="groupForm">
+<form method="POST" action="{% url 'teams:create' %}" id="groupForm" enctype='multipart/form-data'>
 	{% csrf_token %}
 	{{ form|bootstrap }}
   <a class="btn btn-default btn-large" href="{% url 'teams:all' %}" role="button">Cancel</a>

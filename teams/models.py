@@ -14,7 +14,7 @@ class Team(models.Model):
     description = models.TextField(blank=True, default='')
     description_html = models.TextField(editable=False, default='', blank=True)
     members = models.ManyToManyField(User,through="TeamMember")
-    team_pic = models.ImageField(default="team.png", null=True, blank=True)
+    team_pic = models.ImageField(upload_to='images',default="team.png", null=True, blank=True)
 
 
     def __str__(self):

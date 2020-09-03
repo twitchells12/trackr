@@ -19,7 +19,7 @@ def get_attachment_upload_dir(instance, filename):
 class Project(models.Model):
     id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=256)
-    worker = models.ForeignKey(User,related_name='projects',null=True,on_delete=models.SET_NULL)
+    workers = models.ManyToManyField(User,through='ProjectWorker')
     created_by = models.ForeignKey(User,related_name='created',null=True,on_delete=models.SET_NULL)
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
@@ -56,7 +56,10 @@ class Project(models.Model):
 
     class Meta():
         ordering = ['-created_at']
-        unique_together = ['worker','project_name']
+
+class ProjectWorker(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='assigned_to')
+    assignee = models.ForeignKey(User,related_name='proj_worker',on_delete=models.CASCADE)
 
 
 class Comment(models.Model):

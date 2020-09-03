@@ -85,8 +85,8 @@ h3{
               </svg>
             </button>
             <div id="myDropdown" class="dropdown-content">
-
-              {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser%}
+              {# {% if user.is_authenticated and project.worker in user or user.userprofile.is_manager or user.is_superuser %} #}
+              {% if user.is_authenticated %}
                 <a href="{% url 'projects:complete' pk=project.pk %}">Complete</a>
                 <a href="{% url 'projects:edit' pk=project.pk %}">Edit</a>
                 <a href="{% url 'projects:delete' pk=project.pk %}">Delete</a>
@@ -138,9 +138,11 @@ h3{
           <div class="col-md-4">
             <div class="mb-4">
               <h6>Worker</h6>
-              <a href="{% url 'projects:worker' pk=project.pk %}" data-toggle='tooltip' data-pacement='top' class='d-inline-block' title="{{project.worker}}">
-                <img class="rounded-circle img-thumnail avatar-sm" src="{{project.worker.userprofile.profile_pic.url}}">
-              </a>
+              {% for worker in project.workers.all %}
+                <a href="{% url 'projects:worker' pk=worker.pk %}" data-toggle='tooltip' data-pacement='top' class='d-inline-block' title="{{worker}}">
+                  <img class="rounded-circle img-thumnail avatar-sm" src="{{worker.userprofile.profile_pic.url}}">
+                </a>
+              {% endfor %}
             </div>
           </div>
           <div class="col-md-4">
