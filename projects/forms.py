@@ -12,17 +12,23 @@ class ProjForm(forms.ModelForm):
                     'completed_on','team','due_date']
         widgets = {
             'completed_on':DatePickerInput(),
+            'workers': forms.CheckboxSelectMultiple(),
             }
 
-    def __init__(self, *args, **kwargs):
-        self.fields['description'].widget.attrs['rows'] = 4
-        super().__init__(*args, **kwargs)
-        if user is not None:
-            self.fields["team"].queryset = (
-                models.Team.objects.filter(
-                    pk__in=user.teams.values_list("team__pk")
-                )
-            )
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     if user is not None:
+    #         self.fields["team"].queryset = (
+    #             models.Team.objects.filter(
+    #                 pk__in=user.teams.values_list("team__pk")
+    #             )
+    #         )
+    def __init__(self,*args,**kwargs):
+        super(ProjForm, self).__init__(*args, **kwargs)
+        self.fields["workers"].widget = forms.CheckboxSelectMultiple()
+
+
+
 class CommentForm(forms.ModelForm):
 
     class Meta():

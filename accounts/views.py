@@ -47,8 +47,8 @@ def logoutPage(request):
 
 @login_required(login_url='login')
 def profilePage(request):
-    user = request.user.userprofile
-    profile = UserProfileForm(instance=user)
+    profile= request.user.userprofile
+    # profile = UserProfileForm(instance=user)
     teamlist = list(Team.objects.filter(members=request.user))
 
     context = {'profile':profile,'teamlist':teamlist}

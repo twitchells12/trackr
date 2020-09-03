@@ -30,8 +30,8 @@
         <div class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
             <a class="nav-item nav-link" href="{% url 'projects:all' %}" class="btn btn-simple">All Projects</a>
-            <a class="nav-item nav-link" href="{% url 'projects:for_user' %}" class="btn btn-simple">Your Projects</a>
-            <a class="nav-item nav-link" href="{% url 'projects:create' %}" class="btn btn-simple">Add Project</a>
+  <!--          <a class="nav-item nav-link" href="{% url 'projects:for_user' %}" class="btn btn-simple">Your Projects</a>
+            <a class="nav-item nav-link" href="{% url 'projects:create' %}" class="btn btn-simple">Add Project</a>  -->
             <a class="nav-item nav-link" href="{% url 'teams:all' %}" class="btn btn-simple">Teams</a>
             <a class="nav-item nav-link" href="{% url 'accounts:profile' %}" class="btn btn-simple">Profile</a>
             <a class="nav-item nav-link" href="{% url 'accounts:logout' %}" class="btn btn-simple">Log out</a>

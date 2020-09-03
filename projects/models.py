@@ -28,7 +28,6 @@ class Project(models.Model):
     completed_on = models.DateTimeField(blank=True,null=True)
     team = models.ForeignKey(Team,related_name='projects',null=True,blank=True,on_delete=models.SET_NULL)
 
-
     def __str__(self):
         return self.project_name
 

@@ -106,10 +106,10 @@ class DeleteProject(LoginRequiredMixin, generic.DeleteView):
 
 @login_required
 def workerView(request,pk):
-    user = UserProfile.objects.get(pk=pk)
-    profile = UserProfileForm(instance=user)
-
-    context = {'profile':profile}
+    worker = UserProfile.objects.get(pk=pk)
+    # profile = UserProfileForm(instance=worker)
+    teamlist = list(Team.objects.filter(members=request.user))
+    context = {'worker':worker,'teamlist':teamlist}
     return render(request, 'projects/worker_profile.html',context)
 
 
