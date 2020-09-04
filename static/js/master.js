@@ -16,3 +16,6 @@ $(window).on('load',function(){
 $(window).on('load',function(){
   $('#workerModal').modal('show');
 });
+$(document).ready(function() {
+    $(".dropdown-toggle").dropdown();
+});
