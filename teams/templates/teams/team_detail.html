@@ -1,6 +1,11 @@
 {% extends "teams/team_base.html" %}
-
 {% block pregroup %}
+<style media="screen">
+.avatar-sm{
+  width:50px;
+  height:50px;
+}
+</style>
 
   <div class="container">
     <nav class="navbar navbar-expand-lg" role="navigation" id="navbar">
@@ -15,12 +20,16 @@
           {% else %}
           <a href="{% url 'teams:leave' slug=team.slug %}" class="btn btn-sm btn-warning"><span class="fa fa-minus-circle"></span> Leave</a>
           {% endif %}
-          {% if user.is_superuser %}
+          {% if user.is_superuser or user.userprofile.is_manager %}
             <a href="{% url 'teams:delete' slug=team.slug %}" class="btn btn-sm btn-danger"><span class="fa fa-times-circle-o"></span> Delete</a>
+            <a href="{% url 'teams:manage' slug=team.slug %}" class="btn btn-sm btn-warning"><span class="fa fa-pencil-square-o"></span> Manage</a>
           {% endif %}
         </div>
       </div>
     </nav>
+    <a href="#" data-toggle='tooltip' data-pacement='top' title="{{team}}" class='d-inline-block'>
+      <img class="rounded-circle img-thumnail avatar-sm" src="{{team.team_pic.url}}">
+    </a>
   </div>
 
 {% endblock %}
@@ -29,40 +38,42 @@
 
 <div class='container'>
 	{% if team.projects.count == 0 %}
-	<h2>No projects in this team yet!</h2>
+    <h2>No projects in this team yet!</h2>
 
 	{% else %}
-  <br>
-  <div class="d-flex justify-content-center">
-    <div class="container list-group">
-      <div class="d-flex justify-content-between align-items-center row">
-        <div class="col-sm-5 text-muted">Project</div>
-        <div class="col-sm-2 text-muted">Status</div>
-        <div class="col-sm-2 text-muted">Assignee</div>
+    <br>
+    <div class="d-flex justify-content-center">
+      <div class="container list-group">
+        <div class="d-flex justify-content-between align-items-center row">
+          <div class="col-sm-5 text-muted">Project</div>
+          <div class="col-sm-2 text-muted">Status</div>
+          <div class="col-sm-2 text-muted">Workers</div>
 
-  		{% for project in team.projects.all %}
-        <a href="{% url 'projects:single' pk=project.pk %}" class="list-group-item list-group-item-action">
-          <div class="d-flex justify-content-between align-items-center row">
-            <div class="col-sm-5"><strong>{{project.project_name}}</strong></div>
-            {% if project.status == 'Active' %}
-              <div class="col-sm-2"><span class="badge badge-primary">{{project.status}}</span></div>
-            {% elif project.status == 'Hold' %}
-              <div class="col-sm-2"><span class="badge badge-warning">{{project.status}}</span></div>
-            {% elif project.status == 'Past Due' %}
-              <div class="col-sm-2"><span class="badge badge-danger">{{project.status}}</span></div>
-            {% else %}
-              <div class="col-sm-2"><span class="badge badge-success">{{project.status}}</span></div>
-            {% endif %}
-            <div class="col-sm-2">{{project.worker}}</div>
-          </div>
-        </a>
-  		{% endfor %}
+    		{% for project in team.projects.all %}
+          <a href="{% url 'projects:detail' pk=project.pk %}" class="list-group-item list-group-item-action">
+            <div class="d-flex justify-content-between align-items-center row">
+              <div class="col-sm-5"><strong>{{project.project_name}}</strong></div>
+              {% if project.status == 'Active' %}
+                <div class="col-sm-2"><span class="badge badge-primary">{{project.status}}</span></div>
+              {% elif project.status == 'Hold' %}
+                <div class="col-sm-2"><span class="badge badge-warning">{{project.status}}</span></div>
+              {% elif project.status == 'Past Due' %}
+                <div class="col-sm-2"><span class="badge badge-danger">{{project.status}}</span></div>
+              {% else %}
+                <div class="col-sm-2"><span class="badge badge-success">{{project.status}}</span></div>
+              {% endif %}
+              {% for user in project.workers.all %}
+                <div class="col-sm-1">{{user}}</div>
+              {% endfor %}
+            </div>
+          </a>
+    		{% endfor %}
+        </div>
+      </div>
     </div>
-  	{% endif %}
-  </div>
+  {% endif %}
+
 </div>
-
-
 
 <div class="modal fade" tabindex="-1" role="dialog" id="modalMembers" aria-hidden="true">
   <div class="modal-dialog">

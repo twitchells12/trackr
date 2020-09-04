@@ -19,7 +19,7 @@ def get_attachment_upload_dir(instance, filename):
 class Project(models.Model):
     id = models.AutoField(primary_key=True)
     project_name = models.CharField(max_length=256)
-    worker = models.ForeignKey(User,related_name='projects',null=True,on_delete=models.SET_NULL)
+    workers = models.ManyToManyField(User,through='ProjectWorker')
     created_by = models.ForeignKey(User,related_name='created',null=True,on_delete=models.SET_NULL)
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
@@ -27,7 +27,6 @@ class Project(models.Model):
     status = models.CharField(max_length=20,choices=status)
     completed_on = models.DateTimeField(blank=True,null=True)
     team = models.ForeignKey(Team,related_name='projects',null=True,blank=True,on_delete=models.SET_NULL)
-
 
     def __str__(self):
         return self.project_name
@@ -56,14 +55,16 @@ class Project(models.Model):
 
     class Meta():
         ordering = ['-created_at']
-        unique_together = ['worker','project_name']
+
+class ProjectWorker(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='assigned_to')
+    assignee = models.ForeignKey(User,related_name='proj_worker',on_delete=models.CASCADE)
 
 
 class Comment(models.Model):
     project = models.ForeignKey(Project,null=True,on_delete=models.CASCADE,related_name='comments')
     author = models.ForeignKey(User,related_name='author',null=True,on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, blank=True,null=True)
-    text = models.TextField(blank=True,null=True)
+    text = models.CharField(max_length=256,blank=True,null=True)
     approved_comment = models.BooleanField(default=False,null=True)
 
     def approve(self):
@@ -84,3 +85,11 @@ class Attachment(models.Model):
 
     def __str__(self):
         return f"{self.project.id} - {self.file.name}"
+
+class Task(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='task')
+    task = models.CharField(max_length=256,null=True,blank=True)
+    completed = models.BooleanField(default=False,blank=True,null=True)
+
+    def __str__(self):
+        return self.task

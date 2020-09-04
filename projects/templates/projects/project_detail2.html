@@ -1,0 +1,173 @@
+{% extends "projects/project_base.html" %}
+{% block proj_content %}
+<style media="screen">
+  .list-group-item{
+    padding-top: 5px;
+    height:30px;
+    font-size: 12px;
+  }
+  .editbuttons{
+    font-size: 14px;
+    padding-top: 0px;
+    font-size: 12px;
+  }
+</style>
+
+<br>
+<div class="container">
+  <a class="btn btn-warning btn-sm" href="{% url 'projects:all' %}">&#8592; Back to List</a>
+</div>
+<br>
+<div class="card-deck justify-content-center">
+  <div class="card col-sm-6">
+    <div class="card-body">
+      <h3 class="card-title">{{ project.project_name }}</h3>
+      <div class="card-text">{{ project.description }}</div>
+    </div>
+  </div>
+
+  <div class="card col-sm-4 p-0">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+				<strong>Project ID:</strong>
+        {{project.id}}
+      </li>
+      <li class="list-group-item">
+        <strong>Assigned to:</strong>
+        <a href="{% url 'projects:worker' pk=project.pk %}">{{project.worker}}</a>
+      </li>
+      <li class="list-group-item">
+        <strong>Created by:</strong> {{project.created_by}}
+      </li>
+      <li class="list-group-item">
+        <strong>Due date:</strong> {{ project.due_date.date }}
+      </li>
+
+      {% if project.status == 'Complete' %}
+        <li class="list-group-item">
+          <strong>Completed on:</strong> {{ project.completed_on.date}}
+        </li>
+        <li class="list-group-item">
+          <strong>Completed:</strong> Yes
+        </li>
+      {% else %}
+        <li class="list-group-item">
+          <strong>Completed:</strong> No
+        </li>
+      {% endif %}
+      <li class="list-group-item">
+        <strong>Attachments:</strong>
+        <a href="#attachModal" data-toggle="modal" data-target="#attachModal">{{project.attachments.count}}</a>
+      </li>
+      <li class="list-group-item">
+        <strong>Team Assigned:</strong>
+				{% if project.team == Null %}
+					{{project.team}}
+				{% else %}
+					<a href="{% url 'teams:single' slug=project.team|slugify %}">{{project.team}}</a></td>
+				{% endif %}
+      </li>
+
+			{% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser%}
+        <li class="list-group-item">
+          <a href="{% url 'projects:complete' pk=project.pk %}" title:'complete' class="btn btn-simple editbuttons">
+            <span class="fa fa-check text-success icon" aria-hidden='true'></span> Complete
+          </a>
+					<a href="{% url 'projects:edit' pk=project.pk %}" class="btn btn-simple editbuttons">
+						<span class="fa fa-edit text-danger icon" aria-hidden='true'></span> Edit
+					</a>
+					<a href="{% url 'projects:delete' pk=project.pk %}" title:'delete' class="btn btn-simple editbuttons">
+						<span class="fa fa-remove text-danger icon" aria-hidden='true'></span> Delete
+					</a>
+        </li>
+			{% endif %}
+
+    </ul>
+  </div>
+</div>
+<br>
+
+
+<a class="btn btn-primary btn-sm" href="{% url 'projects:add_comment' pk=project.pk %}">Add Comment</a>
+
+
+<div class="container-fluid">
+	<br>
+	<div class="row justify-content-center">
+		{% for comment in project.comments.all %}
+			{% if user.is_authenticated or comment.approved_comment %}
+
+  				<div class="col-auto mb-3">
+  					<div class="card" style="width: 18rem; font-size:12px;">
+  						<div class="card-body">
+  							<h6 class="card-header mb-2">{{ comment.title }}
+                  {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+                    <a href="{% url 'projects:comment_remove' pk=comment.pk %}">
+                      <span class="fa fa-remove text-danger" aria-hidden='true'></span>
+                    </a>
+                  {% endif %}
+                </h5>
+  							<p class="card-text mb-0 text-muted">Comment: </p>
+  							<p class="card-text">{{ comment.text }}</p>
+  							<p class="card-text text-muted text-right">Author: {{ comment.author }}</p>
+  						</div>
+  					</div>
+  				</div>
+			{% endif %}
+		{% empty %}
+		    <p>No comments here yet :(</p>
+		{% endfor %}
+	</div>
+</div>
+
+<!-- attachments modal -->
+<div class="modal fade" id="attachModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Attachments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          {% for file in project.attachments.all %}
+           <li>
+            {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+              <a href="{{ file.file.url }}">{{ file.filename }}</a>
+            {% else %}
+            {{file.filename}}
+            {% endif %}
+           </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="modal-footer">
+        {% if user.is_authenticated and project.worker == user or user.userprofile.is_manager or user.is_superuser %}
+          <a class="btn btn-primary btn-comment" href="{% url 'projects:add_file' pk=project.pk %}">Add File</a>
+          <form method="POST" action="" enctype="multipart/form-data" style="width:100%;">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="attachment_file_input" name="attachment_file_input" />
+                <label class="custom-file-label" for="attachment_file_input">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary">Upload</button>
+              </div>
+            </div>
+          </form>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}

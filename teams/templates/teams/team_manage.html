@@ -2,23 +2,77 @@
 
 {% block pregroup %}
 
-  <div class="container">
-  <h1>{{team.name}}</h1>
-  <h4>
-    {% for member in team.members.all %}
-      <p>{{member}}</p>
-      <p>{{member.pk}}</p>
-      <a class='btn btn-primary' href="{% url 'teams:remove_member' pk=member.pk %}">
-        <span class="fa fa-remove"></span>
-      </a>
-    {% endfor %}
-  </h4>
+
+  <div class="container" style='width:60%'>
+    <!-- Top Card -->
+    <div class="card">
+      <div class="card-body">
+        <!--header section -->
+        <h3>{{ team.name }} Members</h3>
+        <div class='col-auto'>
+          {% for member in team.members.all %}
+            <div class="d-flex justify-content-between align-items-center row">
+              <strong>{{member}}</strong>
+              <a class='btn btn-danger btn-sm' href="{% url 'teams:member_remove' pk=member.pk %}">
+                <span class="fa fa-remove"></span>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="card mt-2">
+      <div class="card-body">
+        <h3>Available Users</h3>
+        <div class='col-auto'>
+          {% for user in users.all %}
+            {% if user not in team.members.all %}
+              <div class="d-flex justify-content-between align-items-center row">
+                <strong>{{user}}</strong>
+                <a class='btn btn-primary btn-sm' href="{% url 'teams:member_add' slug=team.slug pk=user.pk %}">
+                  <span class="fa fa-check"></span>
+                </a>
+              </div>
+              {% endif %}
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
   </div>
 
-  <div class="content">
-    {% if user.is_superuser %}
-      <a href="{% url 'teams:delete' slug=team.slug %}" class="btn btn-lg btn-warning"><span class="fa fa-check-circle-o"></span> Delete</a>
-    {% endif %}
+
+  <div class="container mt-2" align="center">
+    <a href="#teamEditModal" data-toggle="modal" data-target="#teamEditModal" class="btn btn-sm btn-warning editTeam"><span class="fa fa-pencil-square-o"></span> Edit Team</a>
+    <a href="{% url 'teams:delete' slug=team.slug %}" class="btn btn-sm btn-danger"><span class="fa fa-check-circle-o"></span> Delete Team</a>
+
   </div>
 </div>
+
+
+
+<div class="modal fade" id="teamEditModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title">Create a Project</h5>
+			    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			      <span aria-hidden="true">&times;</span>
+			    </button>
+			</div>
+			<div class="modal-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script>
+$('.editTeam').on('click',function(){
+  $('.modal-body').load("{% url 'teams:edit' slug=team.slug %}",function(){
+    $('#modalMembers').modal({show:true});
+  });
+});
+</script>
 {% endblock %}
