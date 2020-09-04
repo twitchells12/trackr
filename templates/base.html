@@ -19,9 +19,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@400;700&display=swap" rel="stylesheet">
 
     <style media="screen">
-    .avatar-sm{
+    .main-avatar-sm{
       width:30px;
       height:30px;
+
+    }
+    .av{
+      outline: none;
+      text-transform: none;
     }
     </style>
 
@@ -43,8 +48,8 @@
             {% comment %} <a class="nav-item nav-link" href="{% url 'accounts:profile' %}" class="btn btn-simple">Profile</a>
             <a class="nav-item nav-link" href="{% url 'accounts:logout' %}" class="btn btn-simple">Log out</a> {% endcomment %}
             <div class="dropdown">
-              <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="profile-pic avatar-sm" src="{{profile.user.userprofile.profile_pic.url}}">
+              <a class="nav-link av" data-toggle="dropdown">
+                <img class="profile-pic rounded-circle main-avatar-sm" src="{{profile.user.userprofile.profile_pic.url}}">
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a>
